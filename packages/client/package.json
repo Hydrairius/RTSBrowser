@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "npm run build -w @rtsbrowser/shared",
     "build": "tsc && vite build",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview"
