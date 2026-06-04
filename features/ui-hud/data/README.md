@@ -9,6 +9,7 @@ Screens, flows, and in-match HUD layout for RTSBrowser. Product scope spans **v0
 | [player-journey.md](player-journey.md) | End-to-end UX: entry → match → win/lose; screen inventory and state machine |
 | [screens.json](screens.json) | Machine-readable screen IDs and transitions (for implementation / routing) |
 | [universal-theme.json](universal-theme.json) | UI color, typography, spacing, and component token catalog (implemented in `packages/client/src/styles/tokens.css`). Token groups include map/world chrome, VFX/combat, HP bars, title/journey backdrop, and tooltips. |
+| [controls-v0.json](controls-v0.json) | Read-only default bindings for settings → Controls tab (`packages/client/src/settings/controls-settings-ui.ts`) |
 
 ## Dependencies
 

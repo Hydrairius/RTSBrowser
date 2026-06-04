@@ -35,6 +35,16 @@
       "prompt": "pleasant soft 8-bit chiptone building select blip, retro strategy game, warm square wave, slightly lower pitch, not harsh",
       "duration": 0.4
     },
+    "command.move": {
+      "engine": "audiogen",
+      "prompt": "soft tactical unit move order acknowledge, muted retro RTS command ping, gentle low whoosh confirm, geometric minimalist, brief",
+      "duration": 0.45
+    },
+    "command.rally": {
+      "engine": "audiogen",
+      "prompt": "production rally point set confirm, subtle flag pin marker drop, warm muted synth blip, RTS barracks waypoint, brief not harsh",
+      "duration": 0.55
+    },
     "build.complete": {
       "engine": "audiogen",
       "prompt": "structure construction complete, satisfying metallic lock-in, factory bay",

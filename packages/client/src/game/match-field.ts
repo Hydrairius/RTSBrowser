@@ -1600,6 +1600,7 @@ export function mountMatchField(
         .map((s) => structureCenterPx(s));
       commandVfx.showMove(worldX, worldY, fromPositions);
       syncProductionRallyOverlay();
+      audio.play("command.rally");
       options.onSelectionHint?.("Rally point set — newly trained units will move here");
       return;
     }
@@ -1637,6 +1638,7 @@ export function mountMatchField(
     if (combatIds.size === 0) {
       state = applyMoveCommand(state, selectedUnitIds, worldX, worldY);
       commandVfx.showMove(worldX, worldY, fromPositions);
+      audio.play("command.move");
       return;
     }
 
@@ -1648,6 +1650,7 @@ export function mountMatchField(
     } else {
       state = applyMoveCommand(state, selectedUnitIds, worldX, worldY);
       commandVfx.showMove(worldX, worldY, fromPositions);
+      audio.play("command.move");
     }
   }
 

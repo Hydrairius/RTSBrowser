@@ -18,6 +18,8 @@ const files = [
   "sfx/purchase/structure.wav",
   "sfx/select/unit.wav",
   "sfx/select/structure.wav",
+  "sfx/command/move.wav",
+  "sfx/command/rally.wav",
   "sfx/build/complete.wav",
   "sfx/unit/deploy.wav",
   "sfx/combat/attack-ranged.wav",

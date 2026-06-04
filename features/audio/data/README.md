@@ -19,6 +19,7 @@ public/audio/
   sfx/ui/         — clicks, menu open
   sfx/build/      — construction complete
   sfx/unit/       — train deploy
+  sfx/command/    — move order, rally point
   sfx/sting/      — match end one-shots
 ```
 

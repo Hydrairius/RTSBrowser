@@ -9,7 +9,7 @@
 .settings-shell {
   position: relative;
   z-index: 1;
-  width: min(640px, 100%);
+  width: min(720px, 100%);
   display: flex;
   flex-direction: column;
   gap: clamp(1.35rem, 2.5vh, 2rem);
@@ -59,6 +59,154 @@
     var(--shadow-setup-panel),
     var(--shadow-setup-inset-highlight);
   backdrop-filter: blur(8px);
+}
+
+.settings-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: clamp(1.1rem, 2vh, 1.5rem);
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+}
+
+.settings-tab {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.settings-tab:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+}
+
+.settings-tab[aria-selected="true"] {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+}
+
+.settings-tab-panel[hidden] {
+  display: none;
+}
+
+.settings-tab-panel .audio-settings {
+  margin-top: 0;
+}
+
+.controls-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+.controls-settings-note {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.controls-settings-group-title {
+  margin: 0 0 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--loop);
+}
+
+.controls-settings-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.controls-settings-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  gap: 0.2rem 1rem;
+  align-items: center;
+  padding: 0.55rem 0.65rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+}
+
+.controls-settings-action {
+  grid-column: 1;
+  grid-row: 1;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.controls-settings-keys {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: flex-end;
+}
+
+.controls-settings-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  padding: 0.2rem 0.5rem;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  background: color-mix(in srgb, var(--bg) 70%, var(--panel));
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--border) 80%, transparent);
+}
+
+.controls-settings-detail {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+@media (max-width: 520px) {
+  .controls-settings-row {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+
+  .controls-settings-keys {
+    grid-column: 1;
+    grid-row: 2;
+    justify-content: flex-start;
+  }
+
+  .controls-settings-detail {
+    grid-row: 3;
+  }
 }
 
 .settings-panel .audio-settings {

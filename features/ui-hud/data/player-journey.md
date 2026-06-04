@@ -300,7 +300,7 @@ Accessible from title, hub, and in-match menu.
 |-----|----|-----|
 | Audio | Master, SFX, music | Same |
 | Video | Fullscreen, UI scale | Same |
-| Controls | Keybinding list (read-only until input feature) | Rebind |
+| Controls | Keybinding list (read-only; [controls-v0.json](controls-v0.json) on settings screen) | Rebind |
 | Account | Hidden | Email, log out, delete account stub |
 
 ---

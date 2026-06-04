@@ -36,6 +36,16 @@
       "category": "sfx",
       "volume": 0.62
     },
+    "command.move": {
+      "src": "/audio/sfx/command/move.wav",
+      "category": "sfx",
+      "volume": 0.5
+    },
+    "command.rally": {
+      "src": "/audio/sfx/command/rally.wav",
+      "category": "sfx",
+      "volume": 0.52
+    },
     "build.complete": {
       "src": "/audio/sfx/build/complete.wav",
       "category": "sfx",

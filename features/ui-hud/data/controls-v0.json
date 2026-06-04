@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "description": "v0 in-match and map controls (read-only reference). Rebind planned with input-selection feature.",
+  "readOnly": true,
+  "groups": [
+    {
+      "id": "camera",
+      "label": "Camera",
+      "bindings": [
+        {
+          "action": "Pan map",
+          "keys": ["W", "A", "S", "D"],
+          "detail": "or arrow keys"
+        },
+        {
+          "action": "Pan map (drag)",
+          "keys": ["Space"],
+          "detail": "hold, then drag on the map"
+        },
+        {
+          "action": "Pan map (drag)",
+          "keys": ["Middle mouse"],
+          "detail": "drag on the map"
+        },
+        {
+          "action": "Zoom in / out",
+          "keys": ["Mouse wheel"],
+          "detail": "zooms toward cursor"
+        },
+        {
+          "action": "Zoom in / out",
+          "keys": ["+", "−"],
+          "detail": "centers on viewport"
+        },
+        {
+          "action": "Jump to your HQ",
+          "keys": ["⌂ Jump to your HQ"],
+          "detail": "footer button"
+        },
+        {
+          "action": "Focus minimap location",
+          "keys": ["Click"],
+          "detail": "tactical minimap"
+        }
+      ]
+    },
+    {
+      "id": "selection",
+      "label": "Selection",
+      "bindings": [
+        {
+          "action": "Select unit or structure",
+          "keys": ["Left click"],
+          "detail": "on map"
+        },
+        {
+          "action": "Box-select troops",
+          "keys": ["Left drag"],
+          "detail": "on empty map"
+        },
+        {
+          "action": "Add or toggle selection",
+          "keys": ["Shift"],
+          "detail": "hold while clicking or box-selecting"
+        },
+        {
+          "action": "Select HQ",
+          "keys": ["Left click"],
+          "detail": "your HQ on the map"
+        },
+        {
+          "action": "Multi-select Barracks",
+          "keys": ["Shift"],
+          "detail": "click or box-select Barracks"
+        }
+      ]
+    },
+    {
+      "id": "orders",
+      "label": "Orders",
+      "bindings": [
+        {
+          "action": "Move or attack-move",
+          "keys": ["Right click"],
+          "detail": "with troops selected; attack if enemy under cursor"
+        },
+        {
+          "action": "Assign workers to generator",
+          "keys": ["Right click"],
+          "detail": "workers selected, friendly generator under cursor (max 2)"
+        },
+        {
+          "action": "Set rally point",
+          "keys": ["Right click"],
+          "detail": "HQ or Barracks selected"
+        },
+        {
+          "action": "Stop current orders",
+          "keys": ["Stop"],
+          "detail": "unit panel button when troops selected"
+        }
+      ]
+    },
+    {
+      "id": "build",
+      "label": "Build & train",
+      "bindings": [
+        {
+          "action": "Open HQ build & train",
+          "keys": ["Left click"],
+          "detail": "your HQ — use left rail buttons"
+        },
+        {
+          "action": "Place structure",
+          "keys": ["Left click"],
+          "detail": "after picking a build from the rail"
+        },
+        {
+          "action": "Train units",
+          "keys": ["Workers", "Striker", "Bolter"],
+          "detail": "HQ or Barracks rail buttons"
+        }
+      ]
+    },
+    {
+      "id": "match",
+      "label": "Match",
+      "bindings": [
+        {
+          "action": "Pause menu",
+          "keys": ["≡"],
+          "detail": "top-right HUD menu — audio, resume, surrender"
+        }
+      ]
+    }
+  ]
+}
