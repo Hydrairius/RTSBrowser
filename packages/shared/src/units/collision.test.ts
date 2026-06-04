@@ -60,6 +60,58 @@ function testSeparationKeepsGap(): void {
   assert.ok(d >= UNIT_COLLISION_RADIUS * 2 - 1, `expected separation, dist=${d}`);
 }
 
+/** Pulling a selected unit away from a pack should not steer it back into the pack. */
+function testPullAwayFromPack(): void {
+  let state = createSkirmishBuildState("triad", "block");
+  const mover = striker("m1", 400, 400);
+  const pack = [
+    striker("p1", 432, 400),
+    striker("p2", 432, 430),
+    striker("p3", 404, 430),
+  ];
+  state = { ...state, units: [mover, ...pack] };
+
+  let x = mover.x;
+  let y = mover.y;
+  const startNearest = Math.min(...pack.map((u) => Math.hypot(x - u.x, y - u.y)));
+
+  for (let t = 0; t < 12; t++) {
+    const step = moveUnitToward(state, "m1", x, y, 280, 400, 5);
+    x = step.x;
+    y = step.y;
+    state = separateUnits({
+      ...state,
+      units: state.units.map((u) =>
+        u.instanceId === "m1" ? { ...u, x, y } : u,
+      ),
+    });
+    const updated = state.units.find((u) => u.instanceId === "m1")!;
+    x = updated.x;
+    y = updated.y;
+  }
+
+  const endNearest = Math.min(...pack.map((u) => Math.hypot(x - u.x, y - u.y)));
+  assert.ok(x < 380, `mover should advance away from pack (x=${x})`);
+  assert.ok(
+    endNearest > startNearest,
+    `mover should increase distance from pack (${startNearest} -> ${endNearest})`,
+  );
+}
+
+/** A unit that starts overlapped may step outward instead of staying glued. */
+function testOverlappedUnitCanStepOutward(): void {
+  let state = createSkirmishBuildState("triad", "block");
+  state = {
+    ...state,
+    units: [striker("m1", 400, 400), striker("p1", 410, 400)],
+  };
+
+  const step = moveUnitToward(state, "m1", 400, 400, 300, 400, 5);
+  assert.ok(step.x < 400, `overlapped mover should step away from blocker (x=${step.x})`);
+}
+
 testCrowdCanSlidePast();
 testSeparationKeepsGap();
+testPullAwayFromPack();
+testOverlappedUnitCanStepOutward();
 console.log("collision.test.ts: all passed");

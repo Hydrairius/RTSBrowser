@@ -82,6 +82,24 @@ function isUnitBlocked(
   return false;
 }
 
+function isUnitStepBlocked(
+  state: BuildSimState,
+  fromX: number,
+  fromY: number,
+  x: number,
+  y: number,
+  ignoreUnitId: string | undefined,
+): boolean {
+  for (const u of state.units) {
+    if (!unitAlive(u) || u.instanceId === ignoreUnitId) continue;
+    const nextD = distPx(x, y, u.x, u.y);
+    if (nextD >= MOVE_UNIT_BLOCK_GAP) continue;
+    const currentD = distPx(fromX, fromY, u.x, u.y);
+    if (nextD <= currentD + 0.25) return true;
+  }
+  return false;
+}
+
 /** Full placement check (terrain + full unit spacing). */
 export function isPositionBlocked(
   state: BuildSimState,
@@ -96,12 +114,14 @@ export function isPositionBlocked(
 /** One movement step — terrain is hard; other units only block on true overlap. */
 function canUnitStepTo(
   state: BuildSimState,
+  fromX: number,
+  fromY: number,
   x: number,
   y: number,
   ignoreUnitId?: string,
 ): boolean {
   if (isTerrainBlocked(state, x, y)) return false;
-  return !isUnitBlocked(state, x, y, ignoreUnitId, MOVE_UNIT_BLOCK_GAP);
+  return !isUnitStepBlocked(state, fromX, fromY, x, y, ignoreUnitId);
 }
 
 export function pushOutOfObstacles(
@@ -168,7 +188,9 @@ function steeringDirection(
     if (!unitAlive(u) || u.instanceId === unitId) continue;
     const d = distPx(x, y, u.x, u.y);
     if (d > avoidR) continue;
-    const push = d > 0.001 ? (MIN_UNIT_GAP - d) / d : 1.5;
+    const softGap = MIN_UNIT_GAP * 1.6;
+    if (d >= softGap) continue;
+    const push = d > 0.001 ? (softGap - d) / softGap : 1.5;
     dx += ((x - u.x) / (d || 1)) * push * unitAvoidWeight;
     dy += ((y - u.y) / (d || 1)) * push * unitAvoidWeight;
   }
@@ -223,7 +245,7 @@ export function moveUnitToward(
 
   const baseAngle = Math.atan2(dy, dx);
   const tryStep = (nx: number, ny: number, arrived: boolean) => {
-    if (!canUnitStepTo(state, nx, ny, unitId)) return null;
+    if (!canUnitStepTo(state, x, y, nx, ny, unitId)) return null;
     return {
       x: nx,
       y: ny,
