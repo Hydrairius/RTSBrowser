@@ -65,7 +65,11 @@ import { el } from "../ui/dom.js";
 import { unitTooltipContent } from "./entity-tooltip.js";
 import type { UnitPanelSnapshot, UnitPanelEntry } from "./hud-unit-panel.js";
 import { UNIT_VISUAL } from "./unit-visuals.js";
-import { registerMatchDebug, unregisterMatchDebug } from "../dev/match-debug.js";
+import {
+  registerMatchCameraFocus,
+  registerMatchDebug,
+  unregisterMatchDebug,
+} from "../dev/match-debug.js";
 import {
   attachMapCamera,
   clientToWorld,
@@ -1280,6 +1284,10 @@ export function mountMatchField(
   function canPlaceOnMap(): boolean {
     return selectedBuild !== null && !paused && options.canPlace();
   }
+
+  registerMatchCameraFocus((gx, gy) => {
+    focusCameraWhenReady(viewport, camera, gx, gy);
+  });
 
   registerMatchDebug(() => {
     const rect = viewport.getBoundingClientRect();

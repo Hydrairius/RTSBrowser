@@ -1,3 +1,4 @@
+import { audio } from "./audio/audio-service.js";
 import { createApp } from "./app.js";
 import { bootNetTest } from "./dev/net-test.js";
 
@@ -13,6 +14,11 @@ async function boot(): Promise<void> {
   }
 
   createApp(app);
+
+  if (import.meta.env.DEV) {
+    (window as unknown as { __RTS_AUDIO_UNLOCK__?: () => Promise<void> }).__RTS_AUDIO_UNLOCK__ =
+      () => audio.unlock();
+  }
 }
 
 boot();

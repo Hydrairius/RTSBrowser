@@ -25,8 +25,10 @@ export interface MatchDebugSnapshot {
 }
 
 type Getter = () => MatchDebugSnapshot;
+type FocusCell = (gx: number, gy: number) => void;
 
 let getter: Getter | null = null;
+let focusCell: FocusCell | null = null;
 
 export function registerMatchDebug(fn: Getter): void {
   getter = fn;
@@ -37,10 +39,21 @@ export function registerMatchDebug(fn: Getter): void {
   }
 }
 
+export function registerMatchCameraFocus(fn: FocusCell): void {
+  focusCell = fn;
+  if (!import.meta.env.DEV) return;
+  const w = window as unknown as { __RTS_FOCUS_CELL__?: FocusCell };
+  if (!w.__RTS_FOCUS_CELL__) {
+    w.__RTS_FOCUS_CELL__ = (gx, gy) => focusCell?.(gx, gy);
+  }
+}
+
 export function unregisterMatchDebug(): void {
   getter = null;
+  focusCell = null;
   if (import.meta.env.DEV) {
     delete (window as unknown as { __RTS_MATCH_DEBUG__?: Getter }).__RTS_MATCH_DEBUG__;
+    delete (window as unknown as { __RTS_FOCUS_CELL__?: FocusCell }).__RTS_FOCUS_CELL__;
   }
 }
 

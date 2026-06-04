@@ -15,6 +15,9 @@
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
+    "capture:marketing": "playwright test e2e/capture-marketing.spec.ts -g \"full-screen PNG set\"",
+    "capture:marketing:video": "playwright test e2e/capture-marketing.spec.ts -g \"faction pick through troop move\"",
+    "capture:marketing:all": "playwright test e2e/capture-marketing.spec.ts",
     "validate:license": "node scripts/validate-license.mjs"
   },
   "engines": {
