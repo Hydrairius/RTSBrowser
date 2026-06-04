@@ -5,11 +5,21 @@ export interface VersionUpdate {
   highlights: string[];
 }
 
-export const GAME_VERSION = "v0.0.2-preview";
+export const GAME_VERSION = "v0.0.3-preview";
 
 export const VERSION_UPDATES: VersionUpdate[] = [
   {
     version: GAME_VERSION,
+    date: "June 4, 2026",
+    title: "Mobile access notice",
+    highlights: [
+      "Added a mobile WIP dialog so phone and touch users know the prototype is still desktop-first.",
+      "The notice can be dismissed and stays hidden for the rest of the browser session.",
+      "Desktop players continue straight to the title screen without the mobile notice.",
+    ],
+  },
+  {
+    version: "v0.0.2-preview",
     date: "June 4, 2026",
     title: "Movement polish",
     highlights: [

@@ -63,6 +63,49 @@ function createUpdatesPanel(): HTMLElement {
   return overlay;
 }
 
+function shouldShowMobileNotice(): boolean {
+  return window.matchMedia("(max-width: 760px), (pointer: coarse)").matches;
+}
+
+function createMobileNotice(): HTMLElement {
+  const overlay = el("div", "mobile-wip-overlay hidden");
+  overlay.tabIndex = -1;
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-labelledby", "mobile-wip-heading");
+
+  const panel = el("div", "mobile-wip-panel");
+  const heading = el("h2", "mobile-wip-heading", ["Mobile support is WIP"]);
+  heading.id = "mobile-wip-heading";
+
+  const body = el("p", "mobile-wip-copy", [
+    "RTSBrowser is playable now, but this prototype is tuned for desktop mouse and keyboard. Mobile controls and layout are still in progress.",
+  ]);
+
+  const closeBtn = button("Got it", "mobile-wip-close");
+  closeBtn.type = "button";
+
+  const close = () => {
+    sessionStorage.setItem("rtsbrowser.mobileWipNoticeSeen", "true");
+    overlay.classList.add("hidden");
+  };
+
+  closeBtn.onclick = (e) => {
+    e.stopPropagation();
+    close();
+  };
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) close();
+  });
+  overlay.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") close();
+  });
+
+  panel.append(heading, body, closeBtn);
+  overlay.append(panel);
+  return overlay;
+}
+
 export function mountTitle(root: HTMLElement, router: JourneyRouter): void {
   root.replaceChildren();
 
@@ -98,6 +141,7 @@ export function mountTitle(root: HTMLElement, router: JourneyRouter): void {
   menuActions.append(playBtn, settingsBtn);
 
   const updatesPanel = createUpdatesPanel();
+  const mobileNotice = createMobileNotice();
 
   cta.append(
     menuActions,
@@ -108,7 +152,7 @@ export function mountTitle(root: HTMLElement, router: JourneyRouter): void {
   );
 
   const screen = el("section", "screen screen-title");
-  screen.append(createJourneyBackdrop(), logo, factions, cta, updatesPanel);
+  screen.append(createJourneyBackdrop(), logo, factions, cta, updatesPanel, mobileNotice);
 
   playBtn.onclick = (e) => {
     e.stopPropagation();
@@ -131,4 +175,12 @@ export function mountTitle(root: HTMLElement, router: JourneyRouter): void {
   screen.addEventListener("click", unlockAndSyncLandingMusic, { once: true });
 
   root.append(screen);
+
+  if (
+    shouldShowMobileNotice() &&
+    sessionStorage.getItem("rtsbrowser.mobileWipNoticeSeen") !== "true"
+  ) {
+    mobileNotice.classList.remove("hidden");
+    mobileNotice.focus();
+  }
 }
