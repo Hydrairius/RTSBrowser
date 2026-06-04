@@ -32,21 +32,6 @@ The `SQLite is an experimental feature` message is a Node warning and is safe to
 
 See [features/multiplayer/data/client-server-split.md](../features/multiplayer/data/client-server-split.md) for what runs on client vs server.
 
-## Play online (GitHub Pages)
+## Deployment
 
-The workflow [`.github/workflows/deploy-pages.yml`](../.github/workflows/deploy-pages.yml) builds the client and publishes to GitHub Pages on every push to `main`.
-
-1. Push this repo to GitHub (repo name becomes the URL path, e.g. `RTSBrowser` → `/RTSBrowser/`).
-2. On GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-3. After the workflow succeeds, open `https://<user>.github.io/<repo>/`.
-
-v0 skirmish runs entirely in the browser; no server is required to play.
-
-**Test the Pages build locally:**
-
-```powershell
-$env:VITE_BASE_PATH = "/RTSBrowser/"   # use your GitHub repo name
-npm run build -w @rtsbrowser/client
-npm run preview -w @rtsbrowser/client
-# http://localhost:4173/RTSBrowser/
-```
+Publishing for others to play (GitHub Pages, build order, audio assets, troubleshooting): **[docs/deployment.md](../docs/deployment.md)**.

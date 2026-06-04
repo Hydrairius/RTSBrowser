@@ -25,6 +25,8 @@ Full scope: [features/game-vision/data/prototype-v0.md](features/game-vision/dat
 ```
 RTSBrowser/
 ├── AGENTS.md                 # This file — entry point for agents
+├── README.md                 # Project overview + links
+├── docs/deployment.md        # GitHub Pages and static hosting
 ├── features/
 │   ├── README.md             # How to add and name features
 │   └── <feature-name>/

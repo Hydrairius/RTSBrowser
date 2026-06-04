@@ -1,5 +1,5 @@
 # Build the Vite client and publish to GitHub Pages (project site: /REPO_NAME/).
-# After the first successful run: repo Settings → Pages → Source: GitHub Actions.
+# Setup and troubleshooting: docs/deployment.md
 
 name: Deploy to GitHub Pages
 
