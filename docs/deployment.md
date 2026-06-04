@@ -23,6 +23,8 @@ Output directory: `packages/client/dist/` (uploaded by GitHub Actions).
 
 Workflow file: [`.github/workflows/deploy-pages.yml`](../.github/workflows/deploy-pages.yml).
 
+**Alternative (branch-only Pages UI):** [`.github/workflows/deploy-pages-gh-pages-branch.yml`](../.github/workflows/deploy-pages-gh-pages-branch.yml) pushes the build to the **`gh-pages`** branch; set Pages source to that branch, root `/`. Do not publish **`main`** at `/` — that serves the README.
+
 ### Play URL
 
 Project sites use the repository name as the path:
@@ -79,6 +81,27 @@ Open `http://localhost:4173/RTSBrowser/` (adjust the path to match `VITE_BASE_PA
 Local dev (`npm run dev:client` at `http://localhost:5173`) uses base `/` and does not need `VITE_BASE_PATH`.
 
 ## Troubleshooting
+
+### Site shows README instead of the game
+
+If [your Pages URL](https://hydrairius.github.io/RTSBrowser/) renders the repository **README** (headings like “Play”, “Develop locally”, tables of `packages/`), Pages is publishing the **repo root**, not the built client.
+
+That happens when **Source** is **Deploy from a branch** → **`main`** → **`/ (root)`**. GitHub serves `README.md` from the monorepo; the game lives in `packages/client/dist` after a build.
+
+**Fix (preferred):**
+
+1. **Settings** → **Pages** → **Build and deployment** → **Source** → **GitHub Actions** (not Branch).
+2. **Actions** → **Deploy to GitHub Pages** → **Run workflow** (wait for green).
+3. Reload `https://<username>.github.io/<repo>/` — you should see the **Vertex** title screen, not markdown docs.
+
+**Fix (if you only see “Branch” in Source):**
+
+1. Push this repo (includes [`.github/workflows/deploy-pages-gh-pages-branch.yml`](../.github/workflows/deploy-pages-gh-pages-branch.yml)).
+2. **Actions** → **Deploy dist to gh-pages branch** → wait for success (creates/updates a `gh-pages` branch with only `packages/client/dist`).
+3. **Settings** → **Pages** → **Source** → **Deploy from a branch** → Branch **`gh-pages`** → Folder **`/ (root)`** — **not** `main`.
+4. Reload the play URL after a minute.
+
+Use **either** GitHub Actions source **or** `gh-pages` branch source, not `main` + root.
 
 ### `Cannot find module '@rtsbrowser/shared'`
 

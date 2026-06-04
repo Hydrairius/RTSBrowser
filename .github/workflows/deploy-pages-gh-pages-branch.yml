@@ -1,0 +1,44 @@
+# Fallback when Settings → Pages only offers "Deploy from a branch".
+# After this workflow runs: Pages → Branch → gh-pages → / (root)
+# See docs/deployment.md — prefer deploy-pages.yml + Source: GitHub Actions when available.
+
+name: Deploy dist to gh-pages branch
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gh-pages-branch
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build shared + client
+        run: |
+          npm run build -w @rtsbrowser/shared
+          npm run build -w @rtsbrowser/client
+        env:
+          VITE_BASE_PATH: /${{ github.event.repository.name }}/
+
+      - name: Push dist to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: packages/client/dist
+          force_orphan: true
