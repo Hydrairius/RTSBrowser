@@ -20,6 +20,7 @@ import {
 import { footprintOverlapsBarrier } from "../map/barriers.js";
 import {
   generatorOnAvailableMatterDeposit,
+  MATTER_DEPOSIT_CAPACITY,
   matterDepositAt,
 } from "../map/matter-deposits.js";
 import type { FlowField } from "../map/flow-field.js";
@@ -53,6 +54,8 @@ export interface PlacedStructure {
   rallyPoint?: { x: number; y: number };
   /** Turrets only: ticks until next shot. */
   attackCooldown?: number;
+  /** Generators only: matter left in the claimed deposit. */
+  matterRemaining?: number;
 }
 
 export interface BuildSimState {
@@ -274,6 +277,7 @@ export function placeStructure(
       hp: built ? maxHp : 0,
       maxHp,
       trainQueue: [],
+      matterRemaining: deposit ? MATTER_DEPOSIT_CAPACITY : undefined,
     },
   ];
 

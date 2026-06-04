@@ -1,6 +1,7 @@
 import {
   HUMAN_PLAYER_ID,
   MAX_GENERATOR_WORKERS,
+  remainingMatterForGenerator,
   structureDef,
   unitDef,
   workersAssignedToGenerator,
@@ -95,20 +96,25 @@ export function structureTooltipContent(
         : `Constructing · ${pct}% · needs workers`;
     if (crew > 0) detail = `${crew} worker${crew === 1 ? "" : "s"} on site`;
   } else if (s.defId === "generator" && s.hp > 0) {
+    const remaining = Math.floor(remainingMatterForGenerator(s));
     const operating = workersOperatingGenerator(state, s.instanceId);
     const assigned = workersAssignedToGenerator(state, s.instanceId);
     const rate = def.incomePerTick ?? 0;
-    if (operating > 0) {
+    if (remaining <= 0) {
+      status = "Matter depleted";
+      detail = "This generator has exhausted its node";
+    } else if (operating > 0) {
       status = `Mining matter · ◆${operating * rate}/tick`;
-      detail = `${operating}/${MAX_GENERATOR_WORKERS} workers active`;
+      detail = `${operating}/${MAX_GENERATOR_WORKERS} workers active · ◆${remaining} left`;
     } else if (assigned > 0) {
       status = "Workers en route";
-      detail = `${assigned} assigned · max ${MAX_GENERATOR_WORKERS}`;
+      detail = `${assigned} assigned · max ${MAX_GENERATOR_WORKERS} · ◆${remaining} left`;
     } else if (friendly) {
       status = "Idle generator";
-      detail = "Right-click with workers to assign";
+      detail = `◆${remaining} left · right-click with workers to assign`;
     } else {
       status = "Idle";
+      detail = `◆${remaining} left`;
     }
   } else if (s.defId === "turret") {
     if (s.hp < s.maxHp) {

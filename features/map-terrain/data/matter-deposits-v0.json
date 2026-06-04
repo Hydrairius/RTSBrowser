@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
-  "description": "Fixed matter nodes — generators may only be placed on an unclaimed deposit (one generator per node).",
+  "description": "Fixed matter nodes — generators may only be placed on an unclaimed deposit (one generator per node). Each node has 1500 matter.",
+  "matterCapacity": 1500,
   "deposits": [
     { "id": "human-m1", "side": "human", "gx": 14, "gy": 62 },
     { "id": "human-m2", "side": "human", "gx": 18, "gy": 82 },

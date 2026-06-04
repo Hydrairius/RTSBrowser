@@ -13,6 +13,9 @@ export interface MatterDeposit {
   gy: number;
 }
 
+/** Matter available from each v0 deposit once a generator is built on it. */
+export const MATTER_DEPOSIT_CAPACITY = 1500;
+
 /** Fixed matter nodes in each HQ bowl — one generator per cell. */
 export const SKIRMISH_MATTER_DEPOSITS: readonly MatterDeposit[] = [
   { id: "human-m1", side: "human", gx: 14, gy: 62 },
@@ -46,6 +49,25 @@ export function isMatterDepositConsumed(
   depositId: string,
 ): boolean {
   return state.consumedMatterDepositIds.includes(depositId);
+}
+
+export function remainingMatterForGenerator(
+  generator: { defId: string; matterRemaining?: number },
+): number {
+  if (generator.defId !== "generator") return 0;
+  return Math.max(0, generator.matterRemaining ?? MATTER_DEPOSIT_CAPACITY);
+}
+
+export function matterDepositRemaining(
+  state: BuildSimState,
+  depositId: string,
+): number {
+  const deposit = SKIRMISH_MATTER_DEPOSITS.find((d) => d.id === depositId);
+  if (!deposit) return 0;
+  const generator = state.structures.find(
+    (s) => s.defId === "generator" && s.gx === deposit.gx && s.gy === deposit.gy,
+  );
+  return generator ? remainingMatterForGenerator(generator) : MATTER_DEPOSIT_CAPACITY;
 }
 
 export function matterDepositsForSide(side: MatterDepositSide): readonly MatterDeposit[] {

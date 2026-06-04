@@ -1,5 +1,6 @@
 import { CELL_PX, structureDef } from "../structures/defs.js";
 import type { BuildSimState, PlacedStructure } from "../structures/building.js";
+import { remainingMatterForGenerator } from "../map/matter-deposits.js";
 import { unitDef, isWorkerUnit } from "./defs.js";
 import { separateUnits, UNIT_COLLISION_RADIUS } from "./collision.js";
 import { moveDestinationsForGroup } from "./combat.js";
@@ -31,7 +32,7 @@ export function incompleteStructuresForPlayer(
 }
 
 function isOperatingGenerator(s: PlacedStructure): boolean {
-  return s.defId === "generator" && structureCombatReady(s);
+  return s.defId === "generator" && structureCombatReady(s) && remainingMatterForGenerator(s) > 0;
 }
 
 function workerAtStructureCenter(u: Unit, site: PlacedStructure): boolean {
@@ -292,8 +293,9 @@ function patchUnit(state: BuildSimState, unit: Unit): BuildSimState {
 
 function applyGeneratorIncome(state: BuildSimState): BuildSimState {
   const players = new Map(state.players);
+  const structures = state.structures.map((s) => ({ ...s }));
 
-  for (const s of state.structures) {
+  for (const s of structures) {
     if (!isOperatingGenerator(s)) continue;
     const def = structureDef("generator");
     const rate = def.incomePerTick ?? 0;
@@ -304,13 +306,17 @@ function applyGeneratorIncome(state: BuildSimState): BuildSimState {
 
     const owner = players.get(s.ownerId);
     if (!owner) continue;
+    const available = remainingMatterForGenerator(s);
+    const gained = Math.min(available, rate * crew);
+    if (gained <= 0) continue;
+    s.matterRemaining = available - gained;
     players.set(s.ownerId, {
       ...owner,
-      matter: owner.matter + rate * crew,
+      matter: owner.matter + gained,
     });
   }
 
-  return { ...state, players };
+  return { ...state, players, structures };
 }
 
 /** Workers build structures, gather at generators, and move on player orders. */

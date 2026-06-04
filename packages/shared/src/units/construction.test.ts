@@ -4,8 +4,10 @@ import {
   advanceWorkerConstruction,
   createSkirmishBuildState,
   getPlayerHq,
+  MATTER_DEPOSIT_CAPACITY,
   placeStructure,
   HUMAN_PLAYER_ID,
+  structureMaxHp,
 } from "../index.js";
 import { isPositionBlocked } from "./collision.js";
 import { UNIT_COLLISION_RADIUS } from "./collision.js";
@@ -108,6 +110,61 @@ function testGeneratorNeedsWorkersForIncome(): void {
   assert.ok(matterAfter > matterBefore, "workers at generator should earn matter");
 }
 
+function testGeneratorIncomeDepletesMatterDeposit(): void {
+  let state = createSkirmishBuildState("triad", "loop");
+  const placed = placeStructure(state, HUMAN_PLAYER_ID, "generator", 30, 72);
+  assert.ok(placed);
+  state = placed!;
+  const gen = state.structures.find(
+    (s) => s.defId === "generator" && s.ownerId === HUMAN_PLAYER_ID,
+  )!;
+  const worker = state.units.find(
+    (u) => u.ownerId === HUMAN_PLAYER_ID && u.defId === "worker",
+  )!;
+
+  state = {
+    ...state,
+    structures: state.structures.map((s) =>
+      s.instanceId === gen.instanceId
+        ? {
+            ...s,
+            buildProgress: 1,
+            hp: structureMaxHp("generator"),
+            matterRemaining: 1,
+          }
+        : s,
+    ),
+    units: state.units.map((u) =>
+      u.instanceId === worker.instanceId
+        ? { ...u, order: { type: "gather", structureId: gen.instanceId }, x: gen.gx * 48, y: gen.gy * 48 }
+        : u,
+    ),
+  };
+
+  const matterBefore = state.players.get(HUMAN_PLAYER_ID)!.matter;
+  state = advanceWorkerConstruction(state);
+  assert.equal(state.players.get(HUMAN_PLAYER_ID)!.matter, matterBefore + 0.5);
+  assert.equal(
+    state.structures.find((s) => s.instanceId === gen.instanceId)!.matterRemaining,
+    0.5,
+  );
+
+  state = advanceWorkerConstruction(state);
+  assert.equal(state.players.get(HUMAN_PLAYER_ID)!.matter, matterBefore + 1);
+  assert.equal(
+    state.structures.find((s) => s.instanceId === gen.instanceId)!.matterRemaining,
+    0,
+  );
+
+  state = advanceWorkerConstruction(state);
+  assert.equal(
+    state.players.get(HUMAN_PLAYER_ID)!.matter,
+    matterBefore + 1,
+    "depleted generators must stop earning",
+  );
+  assert.equal(MATTER_DEPOSIT_CAPACITY, 1500);
+}
+
 function testWorkersSpreadAroundBuildSite(): void {
   let state = createSkirmishBuildState("triad", "loop");
   const placed = placeStructure(state, HUMAN_PLAYER_ID, "generator", 30, 72);
@@ -161,5 +218,6 @@ testStartingWorkersSpawnOutsideHq();
 testNoPassiveBuildWithoutWorkers();
 testWorkersAdvanceConstruction();
 testGeneratorNeedsWorkersForIncome();
+testGeneratorIncomeDepletesMatterDeposit();
 testWorkersSpreadAroundBuildSite();
 console.log("construction.test.js: ok");

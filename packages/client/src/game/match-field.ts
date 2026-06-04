@@ -21,6 +21,8 @@ import {
   SKIRMISH_MAP_BARRIERS,
   SKIRMISH_MATTER_DEPOSITS,
   isMatterDepositConsumed,
+  matterDepositRemaining,
+  remainingMatterForGenerator,
   SKIRMISH_NAV_LANES,
   AI_HQ_BOWL,
   HUMAN_HQ_BOWL,
@@ -802,15 +804,18 @@ export function mountMatchField(
         status.textContent = s.hp < s.maxHp ? `HP ${Math.ceil(s.hp)}` : "Auto-defense";
         fill.style.width = "100%";
       } else if (s.defId === "generator" && s.buildProgress >= 1 && s.hp > 0) {
+        const remaining = Math.floor(remainingMatterForGenerator(s));
         const operating = workersOperatingGenerator(state, s.instanceId);
         const assigned = workersAssignedToGenerator(state, s.instanceId);
         const rate = structureDef("generator").incomePerTick ?? 0;
-        if (operating > 0) {
-          status.textContent = `Mining ◆${operating * rate}/tick · ${operating}/${MAX_GENERATOR_WORKERS} workers`;
+        if (remaining <= 0) {
+          status.textContent = "Depleted";
+        } else if (operating > 0) {
+          status.textContent = `Mining ◆${operating * rate}/tick · ◆${remaining} left · ${operating}/${MAX_GENERATOR_WORKERS} workers`;
         } else if (assigned > 0) {
-          status.textContent = `${assigned} worker${assigned === 1 ? "" : "s"} en route · max ${MAX_GENERATOR_WORKERS}`;
+          status.textContent = `${assigned} worker${assigned === 1 ? "" : "s"} en route · ◆${remaining} left`;
         } else if (s.ownerId === HUMAN_PLAYER_ID) {
-          status.textContent = `Idle · assign workers (right-click)`;
+          status.textContent = `Idle · ◆${remaining} left`;
         } else {
           status.textContent = "";
         }
@@ -1143,7 +1148,7 @@ export function mountMatchField(
       .map((s) => {
         const q = s.trainQueue.map((e) => `${e.unitDefId}:${e.progress}`).join(",");
         const rally = s.rallyPoint ? `${s.rallyPoint.x},${s.rallyPoint.y}` : "";
-        return `${s.instanceId}:${s.buildProgress}:${s.hp}:${q}:${rally}`;
+        return `${s.instanceId}:${s.buildProgress}:${s.hp}:${s.matterRemaining ?? ""}:${q}:${rally}`;
       })
       .join(";");
   }
@@ -1157,9 +1162,10 @@ export function mountMatchField(
       node.classList.toggle("map-matter-deposit--hidden", !cellExplored);
       const claimed = isMatterDepositConsumed(state, d.id);
       node.classList.toggle("map-matter-deposit--claimed", claimed);
+      const remaining = Math.floor(matterDepositRemaining(state, d.id));
       node.title = claimed
-        ? "Matter deposit — generator built"
-        : "Matter deposit — build generator here";
+        ? `Matter deposit — ◆${remaining} left`
+        : `Matter deposit — ◆${remaining} available; build generator here`;
     }
   }
 

@@ -21,8 +21,8 @@ Building placement, construction time, and economy hooks for prototype v0.
 - Territories: **human** builds west of a central neutral strip; **AI** builds east (same rules, automated planner)
 - Each player starts with one **HQ** (2×2), **400** matter, at corner spawns in their zone
 - New structures must be inside that player's **territory** and within **25** cells (Chebyshev) of their HQ
-- **Workers** train at HQ (◆30); they **construct** buildings or **gather** at generators (max **2** per generator, ◆1/tick per worker on site)
-- **Generators** only on **matter deposits** (five per HQ bowl; see `map-terrain`); each node supports one generator for the match
+- **Workers** train at HQ (◆30); they **construct** buildings or **gather** at generators (max **2** per generator, ◆0.5/tick per worker on site)
+- **Generators** only on **matter deposits** (five per HQ bowl; see `map-terrain`); each node supports one generator for the match and contains **◆1500** matter
 - No footprint overlap; **Generator** does not passively earn — workers must operate it; **Barracks** trains **Striker** (melee) and **Bolter** (ranged)
 - **Turret** (1×1, ◆175) — faction-themed defensive tower; auto-fires projectiles at enemies within 8 cells (Triad Spike / Loop Orbit / Block Bracket display names on client)
 - Structures have **HP** (HQ 800, Barracks 450, Generator 200, Turret 300); combat in `@rtsbrowser/shared` units module

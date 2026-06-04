@@ -70,7 +70,7 @@ export const STRUCTURE_DEFS: StructureDef[] = [
     footprint: { w: 1, h: 1 },
     cost: 120,
     buildTimeTicks: 30,
-    incomePerTick: 1,
+    incomePerTick: 0.5,
   },
   {
     id: "barracks",

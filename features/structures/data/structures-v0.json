@@ -29,7 +29,7 @@
       "footprint": { "w": 1, "h": 1 },
       "cost": 120,
       "buildTimeTicks": 30,
-      "incomePerTick": 1,
+      "incomePerTick": 0.5,
       "incomeNote": "per operating worker per tick, max 2 workers",
       "placementNote": "only on unclaimed matter deposit cells (matter-deposits-v0.json)",
       "maxHp": 200
