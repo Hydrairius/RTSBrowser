@@ -1,5 +1,6 @@
 import { Howl, Howler } from "howler";
 import { allSoundIds, soundDef } from "./manifest.js";
+import { resolvePublicUrl } from "./public-url.js";
 import { loadAudioSettings, saveAudioSettings } from "./settings.js";
 import type { AudioSettings, SoundDef } from "./types.js";
 
@@ -149,7 +150,7 @@ class AudioService {
 
   private createHowl(id: string, def: SoundDef, onReady?: () => void): Howl {
     return new Howl({
-      src: [def.src],
+      src: [resolvePublicUrl(def.src)],
       preload: true,
       loop: def.loop ?? false,
       volume: this.effectiveVolume(id, def.volume),
