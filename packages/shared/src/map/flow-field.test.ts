@@ -9,7 +9,7 @@ import {
 import { cellIndex } from "./nav-grid.js";
 import { hasCellLineOfSight } from "./pathfind.js";
 import { FLOW_SQUAD_MIN_UNITS } from "../units/flow-navigation.js";
-import { issueMoveOrderSpread } from "../units/combat.js";
+import { advanceUnitCombat, issueMoveOrderSpread } from "../units/combat.js";
 
 function testFlowFieldReachableMidLane(): void {
   const state = createSkirmishBuildState("triad", "block");
@@ -78,11 +78,43 @@ function testSquadMoveUsesFlowFlag(): void {
   const moved = issueMoveOrderSpread({ ...state, units: squad }, squad, ids, toX, toY);
   for (const u of moved) {
     assert.equal(u.navUseFlow, true);
+    assert.deepEqual(u.navFlowGoal, { x: toX, y: toY });
     assert.ok(!u.navWaypoints?.length, "flow squads should not bake A* waypoints");
   }
+}
+
+function testSquadMoveSharesOneFlowField(): void {
+  let state = createSkirmishBuildState("triad", "block");
+  const ids = new Set<string>();
+  const squad: typeof state.units = [];
+  for (let i = 0; i < FLOW_SQUAD_MIN_UNITS + 4; i++) {
+    const u = state.units[0];
+    if (!u) return;
+    const clone = {
+      ...u,
+      defId: "striker" as const,
+      instanceId: `flow-cache-${i}`,
+      x: 75 * CELL_PX + i * 4,
+      y: 66 * CELL_PX,
+      order: { type: "idle" as const },
+    };
+    squad.push(clone);
+    ids.add(clone.instanceId);
+  }
+  const toX = 105 * CELL_PX;
+  const toY = 66 * CELL_PX;
+  state = {
+    ...state,
+    units: issueMoveOrderSpread({ ...state, units: squad }, squad, ids, toX, toY),
+    flowFields: undefined,
+  };
+
+  state = advanceUnitCombat(state);
+  assert.equal(state.flowFields?.size, 1, "spread squad should share one flow field");
 }
 
 testFlowFieldReachableMidLane();
 testFlowChecksumStable();
 testFlowStepReducesIntegration();
 testSquadMoveUsesFlowFlag();
+testSquadMoveSharesOneFlowField();

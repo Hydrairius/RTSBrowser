@@ -6,6 +6,7 @@ import type { AudioSettings, SoundDef } from "./types.js";
 
 const MUSIC_FADE_MS = 600;
 const MUSIC_IDS = new Set(["music.landing", "music.menu", "music.match"]);
+const SAFETY_SFX_MAX_VOLUME = 0.72;
 
 class AudioService {
   private howls = new Map<string, Howl>();
@@ -14,6 +15,8 @@ class AudioService {
   private unlocked = false;
   private settings: AudioSettings = loadAudioSettings();
   private preloadPromise: Promise<void> | null = null;
+  private lastPlayedAt = new Map<string, number>();
+  private activeInstances = new Map<string, number>();
 
   getSettings(): AudioSettings {
     return { ...this.settings };
@@ -87,14 +90,19 @@ class AudioService {
     return this.preloadPromise;
   }
 
-  play(id: string, opts?: { volume?: number }): void {
+  play(id: string, opts?: { volume?: number; rate?: number }): void {
     if (!this.unlocked || this.settings.muted) return;
+    if (!this.canPlayNow(id)) return;
+
     const howl = this.howls.get(id) ?? this.lazyHowl(id);
     if (!howl) return;
 
-    const vol = this.effectiveVolume(id, opts?.volume);
-    howl.volume(vol);
-    howl.play();
+    const vol = this.withVolumeVariance(id, this.effectiveVolume(id, opts?.volume));
+    const rate = this.withRateVariance(id, opts?.rate ?? 1);
+    const soundId = howl.play();
+    howl.volume(vol, soundId);
+    howl.rate(rate, soundId);
+    this.trackInstance(id, howl, soundId);
   }
 
   playMusic(id: string): void {
@@ -172,7 +180,54 @@ class AudioService {
     const category = def?.category ?? "sfx";
     const bus = category === "music" ? this.settings.music : this.settings.sfx;
     const base = (def?.volume ?? 1) * clipVolume;
-    return this.settings.master * bus * base;
+    const volume = this.settings.master * bus * base;
+    return category === "sfx" ? Math.min(SAFETY_SFX_MAX_VOLUME, volume) : volume;
+  }
+
+  private canPlayNow(id: string): boolean {
+    const def = soundDef(id);
+    if (!def) return false;
+
+    const maxInstances = def.maxInstances;
+    if (maxInstances !== undefined && (this.activeInstances.get(id) ?? 0) >= maxInstances) {
+      return false;
+    }
+
+    const cooldownMs = def.cooldownMs ?? 0;
+    if (cooldownMs <= 0) {
+      this.lastPlayedAt.set(id, performance.now());
+      return true;
+    }
+
+    const now = performance.now();
+    const last = this.lastPlayedAt.get(id) ?? -Infinity;
+    if (now - last < cooldownMs) return false;
+    this.lastPlayedAt.set(id, now);
+    return true;
+  }
+
+  private withVolumeVariance(id: string, volume: number): number {
+    const variance = soundDef(id)?.volumeVariance ?? 0;
+    if (variance <= 0) return volume;
+    const scale = 1 + (Math.random() * 2 - 1) * variance;
+    return Math.max(0, Math.min(SAFETY_SFX_MAX_VOLUME, volume * scale));
+  }
+
+  private withRateVariance(id: string, rate: number): number {
+    const variance = soundDef(id)?.rateVariance ?? 0;
+    if (variance <= 0) return rate;
+    return Math.max(0.5, rate * (1 + (Math.random() * 2 - 1) * variance));
+  }
+
+  private trackInstance(id: string, howl: Howl, soundId: number): void {
+    this.activeInstances.set(id, (this.activeInstances.get(id) ?? 0) + 1);
+    howl.once(
+      "end",
+      () => {
+        this.activeInstances.set(id, Math.max(0, (this.activeInstances.get(id) ?? 1) - 1));
+      },
+      soundId,
+    );
   }
 }
 

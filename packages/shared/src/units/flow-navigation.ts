@@ -60,7 +60,8 @@ export function moveUnitWithFlow(
   goalY: number,
   speed: number,
 ): { state: BuildSimState; unit: Unit; arrived: boolean } {
-  const goalCell = worldToNavCell(goalX, goalY);
+  const flowGoal = unit.navFlowGoal ?? { x: goalX, y: goalY };
+  const goalCell = worldToNavCell(flowGoal.x, flowGoal.y);
   const built = getOrBuildFlowField(state, goalCell.gx, goalCell.gy);
   let nextState = built.state;
   const field = built.field;

@@ -21,6 +21,8 @@ Screens, flows, and in-match HUD layout for RTSBrowser. Product scope spans **v0
 
 v0 screen flow lives in `packages/client/src/` (`app.ts`, `navigation/router.ts`, `screens/*`). Multiplayer test harness: `?dev=net`.
 
+Main menu version tracker content lives in `packages/client/src/version-updates.ts` so the static browser build can render the latest player-facing updates without a backend.
+
 ## Open questions
 
 Tracked in [player-journey.md](player-journey.md) § Open decisions and in [screens.json](screens.json) `openDecisions`.

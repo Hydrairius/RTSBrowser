@@ -5,6 +5,14 @@ export interface SoundDef {
   category: AudioCategory;
   volume?: number;
   loop?: boolean;
+  /** Random per-playback gain trim, e.g. 0.08 means +/-8%. */
+  volumeVariance?: number;
+  /** Random playback-rate trim, e.g. 0.06 means +/-6%. */
+  rateVariance?: number;
+  /** Minimum milliseconds between accepted playbacks for repeated one-shots. */
+  cooldownMs?: number;
+  /** Maximum simultaneously playing instances for this sound id. */
+  maxInstances?: number;
 }
 
 export interface AudioManifest {

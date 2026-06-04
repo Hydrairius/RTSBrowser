@@ -59,22 +59,38 @@
     "combat.attack.ranged": {
       "src": "/audio/sfx/combat/attack-ranged.wav",
       "category": "sfx",
-      "volume": 0.65
+      "volume": 0.34,
+      "volumeVariance": 0.08,
+      "rateVariance": 0.06,
+      "cooldownMs": 70,
+      "maxInstances": 3
     },
     "combat.attack.melee": {
       "src": "/audio/sfx/combat/attack-melee.wav",
       "category": "sfx",
-      "volume": 0.7
+      "volume": 0.32,
+      "volumeVariance": 0.08,
+      "rateVariance": 0.07,
+      "cooldownMs": 80,
+      "maxInstances": 3
     },
     "combat.hit": {
       "src": "/audio/sfx/combat/hit.wav",
       "category": "sfx",
-      "volume": 0.75
+      "volume": 0.3,
+      "volumeVariance": 0.08,
+      "rateVariance": 0.05,
+      "cooldownMs": 95,
+      "maxInstances": 2
     },
     "unit.destroyed": {
       "src": "/audio/sfx/unit/destroyed.wav",
       "category": "sfx",
-      "volume": 0.85
+      "volume": 0.45,
+      "volumeVariance": 0.06,
+      "rateVariance": 0.04,
+      "cooldownMs": 140,
+      "maxInstances": 2
     },
     "sting.victory": {
       "src": "/audio/sfx/sting/victory.wav",

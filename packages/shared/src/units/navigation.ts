@@ -15,6 +15,7 @@ export function clearUnitNav(unit: Unit): Unit {
     navWaypointIndex: undefined,
     navGoalKey: undefined,
     navUseFlow: undefined,
+    navFlowGoal: undefined,
   };
 }
 

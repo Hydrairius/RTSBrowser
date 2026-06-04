@@ -28,6 +28,8 @@ export interface Unit {
   navGoalKey?: string;
   /** Squad move: sample shared flow field instead of per-unit A*. */
   navUseFlow?: boolean;
+  /** Shared squad flow goal; final move order may still be a per-unit spread point. */
+  navFlowGoal?: { x: number; y: number };
 }
 
 export interface Projectile {

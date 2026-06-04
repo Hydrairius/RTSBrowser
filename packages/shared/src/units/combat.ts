@@ -405,12 +405,16 @@ export function issueMoveOrder(
   const useFlow = ids.size >= FLOW_SQUAD_MIN_UNITS;
   return units.map((u) => {
     if (!ids.has(u.instanceId)) return u;
-    const withOrder = clearUnitNav({
+    const base = clearUnitNav({
       ...u,
       order: { type: "move", x, y },
+    });
+    const withOrder = {
+      ...base,
       navUseFlow: useFlow,
       navGoalKey: useFlow ? navGoalKey(x, y) : undefined,
-    });
+      navFlowGoal: useFlow ? { x, y } : undefined,
+    };
     if (useFlow) return withOrder;
     return ensureUnitPath(state, withOrder, x, y);
   });
@@ -456,12 +460,16 @@ export function issueMoveOrderSpread(
   return units.map((u) => {
     if (!ids.has(u.instanceId)) return u;
     const d = dests.get(u.instanceId) ?? { x: centerX, y: centerY };
-    const withOrder = clearUnitNav({
+    const base = clearUnitNav({
       ...u,
       order: { type: "move", x: d.x, y: d.y },
+    });
+    const withOrder = {
+      ...base,
       navUseFlow: useFlow,
       navGoalKey: useFlow ? sharedGoalKey : undefined,
-    });
+      navFlowGoal: useFlow ? { x: centerX, y: centerY } : undefined,
+    };
     if (useFlow) return withOrder;
     return ensureUnitPath(state, withOrder, d.x, d.y);
   });

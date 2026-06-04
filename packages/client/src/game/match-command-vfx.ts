@@ -4,8 +4,6 @@ import { applyFactionTheme } from "./faction-shapes.js";
 import { el } from "../ui/dom.js";
 
 const MARKER_LIFETIME_MS = 2200;
-const LINE_LIFETIME_MS = 1400;
-const MAX_MOVE_LINES = 8;
 
 export interface CommandVfxHandle {
   showMove(worldX: number, worldY: number, fromPositions: { x: number; y: number }[]): void;
@@ -19,10 +17,8 @@ export function mountCommandVfx(
   humanFaction: FactionId,
 ): CommandVfxHandle {
   const layer = el("div", "match-command-vfx");
-  const linesSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  linesSvg.setAttribute("class", "command-lines-svg");
   const markersLayer = el("div", "command-markers-layer");
-  layer.append(linesSvg, markersLayer);
+  layer.append(markersLayer);
   worldLayer.append(layer);
 
   const removeLater = (node: HTMLElement, ms: number) => {
@@ -39,34 +35,9 @@ export function mountCommandVfx(
     return m;
   };
 
-  const drawLines = (fromPositions: { x: number; y: number }[], toX: number, toY: number) => {
-    const n = fromPositions.length;
-    if (n === 0) return;
-    const step = n <= MAX_MOVE_LINES ? 1 : Math.ceil(n / MAX_MOVE_LINES);
-    let drawn = 0;
-    for (let i = 0; i < n && drawn < MAX_MOVE_LINES; i += step) {
-      const from = fromPositions[i]!;
-      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-      line.setAttribute("class", "command-move-line");
-      line.setAttribute("x1", String(Math.round(from.x)));
-      line.setAttribute("y1", String(Math.round(from.y)));
-      line.setAttribute("x2", String(Math.round(toX)));
-      line.setAttribute("y2", String(Math.round(toY)));
-      linesSvg.append(line);
-      window.setTimeout(() => line.remove(), LINE_LIFETIME_MS);
-      drawn++;
-    }
-    while (linesSvg.childNodes.length > MAX_MOVE_LINES) {
-      linesSvg.firstChild?.remove();
-    }
-  };
-
   return {
-    showMove(worldX, worldY, fromPositions) {
+    showMove(worldX, worldY) {
       spawnMarker("command-marker command-marker-move", worldX, worldY);
-      if (fromPositions.length > 0 && fromPositions.length <= 24) {
-        drawLines(fromPositions, worldX, worldY);
-      }
     },
 
     showAttack(worldX, worldY, targetKind) {
