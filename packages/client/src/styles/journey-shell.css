@@ -1,0 +1,143 @@
+/* Shared backdrop for title, skirmish setup, and future journey screens */
+
+.journey-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.journey-bg {
+  position: absolute;
+  inset: 0;
+}
+
+.journey-bg-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.45;
+  animation: journey-glow-drift 14s ease-in-out infinite;
+}
+
+.journey-bg-glow-triad {
+  width: min(42vw, 420px);
+  height: min(42vw, 420px);
+  top: -8%;
+  left: -6%;
+  background: var(--journey-glow-triad);
+}
+
+.journey-bg-glow-loop {
+  width: min(38vw, 380px);
+  height: min(38vw, 380px);
+  bottom: -12%;
+  right: -4%;
+  background: var(--journey-glow-loop);
+  animation-delay: -5s;
+}
+
+.journey-bg-glow-block {
+  width: min(28vw, 280px);
+  height: min(28vw, 280px);
+  top: 38%;
+  left: 42%;
+  background: var(--journey-glow-block);
+  animation-delay: -9s;
+}
+
+.journey-bg-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  background-image:
+    linear-gradient(var(--journey-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--journey-grid-line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, var(--journey-mask-solid) 20%, transparent 75%);
+}
+
+.journey-backdrop-light .journey-bg-glow {
+  opacity: 0.28;
+}
+
+.journey-backdrop-light .journey-bg-grid {
+  opacity: 0.05;
+}
+
+.journey-attract {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0.28;
+}
+
+.journey-backdrop-light .journey-attract {
+  opacity: 0.16;
+}
+
+.journey-attract .drift-shape {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  animation: drift 18s linear infinite, drift-pulse 4s ease-in-out infinite;
+}
+
+.journey-attract .drift-shape.shape-0 {
+  background: var(--triad);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.journey-attract .drift-shape.shape-1 {
+  background: var(--loop);
+  border-radius: 50%;
+  animation-direction: normal, normal;
+}
+
+.journey-attract .drift-shape.shape-2 {
+  background: var(--block);
+}
+
+@keyframes journey-glow-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(24px, -18px) scale(1.08);
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(40px, -30px) rotate(180deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(360deg);
+  }
+}
+
+@keyframes drift-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes journey-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

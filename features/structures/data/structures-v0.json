@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "description": "v0 buildable structures — mirrored in packages/shared/src/structures/defs.ts",
+  "map": { "cols": 180, "rows": 135, "cellPx": 48, "scaleNote": "2.5× prior 72×54 skirmish grid" },
+  "territory": {
+    "neutralZoneCols": 15,
+    "human": "west of neutral strip",
+    "ai": "east of neutral strip"
+  },
+  "startingMatter": 400,
+  "spawns": { "humanHq": { "gx": 25, "gy": 70 }, "aiHq": { "gx": 135, "gy": 25 } },
+  "buildRangeFromHq": 25,
+  "aiBuildIntervalTicks": 35,
+  "structures": [
+    {
+      "id": "hq",
+      "displayName": "HQ",
+      "category": "core",
+      "footprint": { "w": 2, "h": 2 },
+      "cost": 0,
+      "buildTimeTicks": 0,
+      "maxPerPlayer": 1,
+      "maxHp": 800
+    },
+    {
+      "id": "generator",
+      "displayName": "Generator",
+      "category": "economy",
+      "footprint": { "w": 1, "h": 1 },
+      "cost": 120,
+      "buildTimeTicks": 30,
+      "incomePerTick": 1,
+      "incomeNote": "per operating worker per tick, max 2 workers",
+      "placementNote": "only on unclaimed matter deposit cells (matter-deposits-v0.json)",
+      "maxHp": 200
+    },
+    {
+      "id": "barracks",
+      "displayName": "Barracks",
+      "category": "production",
+      "footprint": { "w": 2, "h": 1 },
+      "cost": 150,
+      "buildTimeTicks": 45,
+      "maxHp": 450
+    },
+    {
+      "id": "turret",
+      "displayName": "Turret",
+      "category": "defense",
+      "footprint": { "w": 1, "h": 1 },
+      "cost": 175,
+      "buildTimeTicks": 40,
+      "maxHp": 300,
+      "turretRangeCells": 8,
+      "turretDamage": 12,
+      "turretCooldownTicks": 15,
+      "turretProjectileSpeed": 16,
+      "factionDisplayNames": {
+        "triad": "Spike Turret",
+        "loop": "Orbit Guard",
+        "block": "Bracket Turret"
+      }
+    }
+  ]
+}

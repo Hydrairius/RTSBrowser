@@ -1,0 +1,767 @@
+/**
+
+ * Universal theme — single source for UI chrome, factions, and match-field tokens.
+
+ * Spec mirror: features/ui-hud/data/universal-theme.json
+
+ * Import first in style.css.
+
+ */
+
+:root {
+
+  /* ——— Color: base chrome ——— */
+
+  --bg: #0f1419;
+
+  --panel: #1a2332;
+
+  --text: #e8eef4;
+
+  --muted: #8b9cb3;
+
+  --accent: #4a9eff;
+
+  --ok: #3dd68c;
+
+  --warn: #f5a623;
+
+  --err: #ff6b6b;
+
+  --text-on-accent: #ffffff;
+
+
+
+  /* Semantic aliases (prefer in new CSS) */
+
+  --color-bg: var(--bg);
+
+  --color-surface: var(--panel);
+
+  --color-text: var(--text);
+
+  --color-text-muted: var(--muted);
+
+  --color-accent: var(--accent);
+
+  --color-success: var(--ok);
+
+  --color-warning: var(--warn);
+
+  --color-error: var(--err);
+
+
+
+  /* Surfaces & borders */
+
+  --border: #2d3a4d;
+
+  --border-strong: #3d5168;
+
+  --border-focus: #5eb3ff;
+
+  --surface-raised: #151d28;
+
+  --surface-inset: #121a24;
+
+  --surface-muted: #2d3a4d;
+
+  --surface-button: #243044;
+
+  --surface-button-hover: #2a3d55;
+
+  --surface-active: #1e3a5c;
+
+  --surface-back-hover: #354357;
+
+  --viewport-bg: #060a0f;
+
+  --world-bg: #121a24;
+
+  --portrait-bg: #0c1016;
+
+
+
+  /* Overlays & scrims */
+
+  --overlay-scrim: rgba(0, 0, 0, 0.6);
+
+  --overlay-panel-scrim: rgba(15, 20, 25, 0.85);
+
+  --chrome-glass: rgba(21, 29, 40, 0.94);
+
+  --chrome-float: rgba(15, 20, 25, 0.92);
+
+
+
+  /* ——— Typography ——— */
+
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --font-mono: ui-monospace, "Cascadia Code", "Consolas", monospace;
+
+  --font-size-2xs: 0.6rem;
+
+  --font-size-xs: 0.62rem;
+
+  --font-size-sm: 0.72rem;
+
+  --font-size-md: 0.85rem;
+
+  --font-size-base: 1rem;
+
+  --font-size-lg: 1.1rem;
+
+  --font-size-xl: 1.75rem;
+
+  --font-size-2xl: 2.5rem;
+
+  --font-weight-medium: 500;
+
+  --font-weight-semibold: 600;
+
+  --font-weight-bold: 700;
+
+  --font-weight-display: 800;
+
+  --letter-spacing-caps: 0.08em;
+
+  --letter-spacing-kicker: 0.14em;
+
+  --line-height-tight: 1.35;
+
+  --line-height-base: 1.5;
+
+
+
+  /* ——— Spacing (4px rhythm) ——— */
+
+  --space-1: 0.25rem;
+
+  --space-2: 0.5rem;
+
+  --space-3: 0.75rem;
+
+  --space-4: 1rem;
+
+  --space-5: 1.25rem;
+
+  --space-6: 1.5rem;
+
+  --space-8: 2rem;
+
+  --space-10: 2.5rem;
+
+
+
+  /* ——— Radius ——— */
+
+  --radius-sm: 4px;
+
+  --radius-md: 6px;
+
+  --radius-lg: 8px;
+
+  --radius-xl: 10px;
+
+  --radius-2xl: 12px;
+
+  --radius-3xl: 16px;
+
+  --radius-pill: 999px;
+
+
+
+  /* ——— Shadows & glow ——— */
+
+  --shadow-panel: 0 12px 40px rgba(0, 0, 0, 0.35);
+
+  --shadow-hud: 0 4px 16px rgba(0, 0, 0, 0.35);
+
+  --shadow-minimap-card: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 0 1px var(--surface-inset-highlight) inset;
+
+  --shadow-accent-sm: 0 0 14px rgba(94, 179, 255, 0.35);
+
+  --shadow-accent-md: 0 0 24px rgba(74, 158, 255, 0.35);
+
+  --glow-accent-pulse: rgba(74, 158, 255, 0.55);
+
+
+
+  /* ——— Component tokens ——— */
+
+  --btn-radius: var(--radius-md);
+
+  --btn-padding-y: 0.5rem;
+
+  --btn-padding-x: 1rem;
+
+  --btn-secondary-bg: var(--surface-muted);
+
+  --btn-secondary-hover-bg: var(--surface-back-hover);
+
+  --panel-radius: var(--radius-2xl);
+
+  --panel-border: 1px solid var(--border);
+
+  --input-radius: var(--radius-lg);
+
+  --input-border: 1px solid var(--border);
+
+  --input-bg: color-mix(in srgb, var(--bg) 80%, transparent);
+
+  --hud-bar-height: 4px;
+
+  --hud-card-bg: var(--chrome-glass);
+
+  --hud-minimap-bg: #0a1018;
+
+  --hud-label-size: var(--font-size-xs);
+
+
+
+  /* ——— Factions (field + UI accents) ——— */
+
+  --triad: #e85d4a;
+
+  --loop: #4a9eff;
+
+  --block: #c9a227;
+
+  --faction-triad: var(--triad);
+
+  --faction-loop: var(--loop);
+
+  --faction-block: var(--block);
+
+
+
+  /* Skirmish / minimap player read (human = cool bright, AI = warm) */
+
+  --player-human: #5eb3ff;
+
+  --player-ai: #e85d4a;
+
+  --player-neutral: var(--muted);
+
+  --zone-human-label: #7eb8ff;
+
+  --zone-ai-label: #ff9a8a;
+
+
+
+  /* ——— Build preview ——— */
+
+  --build-range-fill: rgba(61, 214, 140, 0.15);
+
+  --build-range-outline: rgba(61, 214, 140, 0.35);
+
+
+
+  --build-ghost-fill-alpha: 0.32;
+
+  --build-ghost-stripe-alpha: 0.24;
+
+  --build-ghost-border-width: 2px;
+
+  --build-ghost-glow-spread: 18px;
+
+  --build-ghost-glow-alpha: 0.55;
+
+  --build-ghost-inset-glow-alpha: 0.22;
+
+  --build-ghost-pulse-duration: 1.35s;
+
+  --build-ghost-label-size: 0.72rem;
+
+  --build-ghost-hint-size: 0.6rem;
+
+
+
+  --build-snap-fill-alpha: 0.2;
+
+  --build-snap-border-alpha: 0.85;
+
+
+
+  --build-invalid-fill: rgba(255, 90, 70, 0.18);
+
+  --build-invalid-border: rgba(255, 120, 100, 0.92);
+
+  --build-invalid-glow: rgba(255, 100, 80, 0.45);
+
+  --build-invalid-label: #ffb4a8;
+
+
+
+  --build-placement-flash-alpha: 0.42;
+
+
+
+  /* Faction silhouettes — shared by structures, build preview, placement flash */
+
+  --shape-triad: polygon(50% 8%, 92% 92%, 8% 92%);
+
+  --shape-triad-hq: polygon(50% 4%, 96% 90%, 4% 90%);
+
+  --shape-triad-scaffold: polygon(50% 10%, 90% 90%, 10% 90%);
+
+  --shape-triad-cell: polygon(50% 6%, 94% 94%, 6% 94%);
+
+  --shape-loop-radius: 50%;
+
+  --shape-block-radius: 2px;
+
+
+
+  /* Unit roles — mixed into faction fill on field glyphs */
+
+  --unit-striker-mix: #fff4e8;
+
+  --unit-bolter-mix: #d8ecff;
+
+  --shape-triad-striker: polygon(50% 4%, 96% 96%, 4% 96%);
+
+  --shape-triad-bolter: polygon(50% 10%, 90% 90%, 10% 90%);
+
+  --shape-loop-striker-radius: 50%;
+
+  --shape-loop-bolter-radius: 50%;
+
+  --shape-block-striker-inset: 1px;
+
+  --shape-block-bolter-inset: 2px;
+
+
+
+  /* Match field — unit footprint & billboard readability */
+
+  --match-billboard-bg: rgba(6, 10, 18, 0.94);
+
+  --match-billboard-border: rgba(255, 255, 255, 0.16);
+
+  --match-billboard-text: #eef4fa;
+
+  --match-billboard-accent: color-mix(in srgb, var(--faction-color, var(--accent)) 65%, var(--color-mix-light));
+
+  --match-structure-label-size: 0.88rem;
+
+  --match-structure-status-size: 0.78rem;
+
+  --match-structure-hq-label-size: 1.05rem;
+
+  --match-tooltip-base: 0.92rem;
+
+  --match-tooltip-title: 1.08rem;
+
+  --match-tooltip-detail: 0.8rem;
+
+
+
+  /* ——— Color-mix anchors ——— */
+
+  --color-mix-light: #ffffff;
+
+  --color-mix-dark: #0c1218;
+
+  --color-mix-panel: #1a1f28;
+
+
+
+  /* ——— Text variants ——— */
+
+  --text-cool: #b8dcff;
+
+  --text-cool-muted: #b8c8dc;
+
+  --text-cool-bright: #c8dcf0;
+
+  --text-tooltip-body: #e8f0f8;
+
+  --text-tooltip-detail: #a8b8cc;
+
+  --text-tooltip-hp: #9ed8b0;
+
+  --text-tooltip-enemy: #f0a090;
+
+
+
+  /* ——— Surfaces (extended) ——— */
+
+  --border-subtle: #2a3545;
+
+  --surface-action: #1e2a3a;
+
+  --minimap-chrome-border: #4a5f78;
+
+  --overlay-float-strong: rgba(15, 20, 25, 0.9);
+
+
+
+  /*
+
+   * Faction vs player:
+
+   * --loop / --triad / --block — faction identity (units, lore, resource HUD)
+
+   * --player-human / --player-ai — skirmish ownership chrome (minimap, zones, wayfinder)
+
+   * --border-focus — interactive focus ring (same hex as --player-human)
+
+   */
+
+
+
+  /* ——— Map / world chrome ——— */
+
+  --world-inset-shadow: inset 0 0 80px rgba(0, 0, 0, 0.45);
+
+  --map-grid-bg: #141c28;
+
+  --map-grid-line: rgba(90, 130, 180, 0.22);
+
+  --map-barrier-fill: #7a8a9e;
+
+  --map-barrier-border: #c5d0dc;
+
+  --map-barrier-highlight: rgba(255, 255, 255, 0.2);
+
+  --map-barrier-shadow-outer: rgba(0, 0, 0, 0.35);
+
+  --map-barrier-shadow-drop: rgba(0, 0, 0, 0.4);
+
+
+
+  --matter-fill: rgba(200, 140, 255, 0.12);
+
+  --matter-border: rgba(200, 160, 255, 0.55);
+
+  --matter-glow-inset: rgba(180, 120, 255, 0.15);
+
+  --matter-icon: rgba(220, 180, 255, 0.75);
+
+  --matter-icon-glow: rgba(160, 100, 255, 0.5);
+
+  --matter-claimed-border: rgba(140, 150, 170, 0.4);
+
+  --matter-claimed-fill: rgba(60, 70, 90, 0.15);
+
+  --matter-minimap-border: rgba(200, 160, 255, 0.7);
+
+  --matter-minimap-fill: rgba(160, 100, 255, 0.25);
+
+
+
+  --zone-human-fill: color-mix(in srgb, var(--loop) 12%, transparent);
+
+  --zone-human-border: color-mix(in srgb, var(--loop) 45%, transparent);
+
+  --zone-ai-fill: color-mix(in srgb, var(--player-ai) 10%, transparent);
+
+  --zone-ai-border: color-mix(in srgb, var(--player-ai) 40%, transparent);
+
+  --zone-neutral-stripe-a: color-mix(in srgb, var(--muted) 4%, transparent);
+
+  --zone-neutral-stripe-b: rgba(0, 0, 0, 0.08);
+
+  --zone-minimap-human: color-mix(in srgb, var(--loop) 22%, transparent);
+
+  --zone-minimap-ai: color-mix(in srgb, var(--player-ai) 20%, transparent);
+
+  --zone-minimap-neutral: rgba(120, 130, 150, 0.15);
+
+
+
+  --hq-bowl-border: rgba(255, 255, 255, 0.22);
+
+  --hq-bowl-fill: rgba(255, 255, 255, 0.03);
+
+  --hq-bowl-label: rgba(255, 255, 255, 0.55);
+
+  --nav-lane-border: rgba(180, 200, 220, 0.28);
+
+  --nav-lane-fill: color-mix(in srgb, var(--muted) 6%, transparent);
+
+  --nav-lane-label: rgba(200, 210, 225, 0.45);
+
+
+
+  --wayfinder-bg: rgba(20, 50, 90, 0.95);
+
+  --wayfinder-text: var(--text-cool);
+
+  --wayfinder-border: var(--player-human);
+
+  --shadow-wayfinder: 0 0 16px color-mix(in srgb, var(--player-human) 45%, transparent);
+
+  --shadow-wayfinder-pulse-min: 0 0 10px color-mix(in srgb, var(--player-human) 35%, transparent);
+
+  --shadow-wayfinder-pulse-max: 0 0 22px color-mix(in srgb, var(--player-human) 65%, transparent);
+
+
+
+  --shadow-player-human-sm: 0 0 3px color-mix(in srgb, var(--player-human) 55%, transparent);
+
+  --shadow-player-ai-sm: 0 0 3px color-mix(in srgb, var(--player-ai) 70%, transparent);
+
+  --shadow-player-human-md: 0 0 4px color-mix(in srgb, var(--player-human) 75%, transparent);
+
+  --shadow-player-ai-md: 0 0 4px color-mix(in srgb, var(--player-ai) 85%, transparent);
+
+  --shadow-player-human-lg: 0 0 8px var(--player-human);
+
+  --shadow-player-ai-lg: 0 0 6px var(--player-ai);
+
+  --minimap-viewport-fill: color-mix(in srgb, var(--player-human) 12%, transparent);
+
+  --minimap-friendly-border: color-mix(in srgb, var(--color-mix-light) 85%, transparent);
+
+  --minimap-enemy-border: rgba(255, 220, 210, 0.7);
+
+
+
+  /* ——— VFX / combat / command ——— */
+
+  --vfx-ranged: #88ddff;
+
+  --vfx-ranged-soft: #9ed4ff;
+
+  --vfx-ranged-bright: #7ec8ff;
+
+  --vfx-ranged-pale: #c8e8ff;
+
+  --vfx-ranged-label: #e0f0ff;
+
+  --vfx-ranged-pale-bg: #c8f0ff;
+
+  --vfx-melee: #ffcc66;
+
+  --vfx-melee-bright: #ffee88;
+
+  --vfx-melee-spark: #ffd899;
+
+  --vfx-melee-spark-glow: #ffaa44;
+
+  --vfx-melee-spark-soft: #ffe0a8;
+
+  --vfx-attack: #ff5566;
+
+  --vfx-attack-glow: rgba(255, 80, 90, 0.9);
+
+  --vfx-structure-target: #ff8844;
+
+  --vfx-structure-target-glow: rgba(255, 120, 60, 0.95);
+
+  --vfx-structure-target-border: rgba(255, 120, 60, 0.5);
+
+  --vfx-melee-ring-glow: rgba(255, 200, 80, 0.8);
+
+  --vfx-command-move-stroke: rgba(126, 220, 255, 0.75);
+
+  --vfx-command-move-border: rgba(126, 220, 255, 0.95);
+
+  --vfx-command-move-glow: rgba(126, 200, 255, 0.6);
+
+  --vfx-command-inner: rgba(255, 255, 255, 0.7);
+
+  --vfx-train-melee-glow: rgba(255, 200, 100, 0.5);
+
+  --vfx-selection-border: rgba(126, 200, 255, 0.9);
+
+  --vfx-selection-fill: rgba(80, 160, 255, 0.12);
+
+  --vfx-selection-divider: rgba(126, 200, 255, 0.2);
+
+  --vfx-selection-btn-border: rgba(126, 200, 255, 0.25);
+
+  --vfx-overlay-scrim: rgba(6, 10, 18, 0.72);
+
+  --vfx-overlay-scrim-strong: rgba(6, 10, 18, 0.85);
+
+  --vfx-train-track-start: #2a5080;
+
+
+
+  /* ——— HP bars ——— */
+
+  --hp-track-bg: rgba(0, 0, 0, 0.7);
+
+  --hp-track-bg-soft: rgba(0, 0, 0, 0.65);
+
+  --hp-track-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+
+  --hp-track-shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.4);
+
+  --hp-track-shadow-bar: 0 1px 4px rgba(0, 0, 0, 0.4);
+
+  --hp-fill-healthy-start: #2a6040;
+
+  --hp-fill-healthy-end: #5ecf7a;
+
+  --hp-fill-ranged-start: #2a4a6a;
+
+  --hp-fill-ranged-end: #6eb8ff;
+
+  --hp-fill-structure-damaged-start: #8b3030;
+
+  --hp-fill-structure-damaged-end: #e85a5a;
+
+  --hp-fill-built-start: #2a4a6a;
+
+  --hp-fill-hud-track: #0a0e14;
+
+  --hp-fill-hud-low-start: #9a7a22;
+
+  --hp-fill-hud-critical-start: #a83232;
+
+
+
+  /* ——— Unit / structure field mixes ——— */
+
+  --unit-worker-mix: #d0f0ff;
+
+  --unit-worker-mix-alt: #c8e8ff;
+
+  --unit-worker-mix-block: #d4ecff;
+
+  --unit-worker-mix-train: #b8e0ff;
+
+  --structure-building-label-mix: #8ec8ff;
+
+  --structure-scaffold-stripe: rgba(30, 45, 65, 0.25);
+
+  --structure-progress-mix: #1a3050;
+
+  --structure-glyph-inset-shadow: rgba(0, 0, 0, 0.35);
+
+  --structure-glyph-inset-shadow-strong: rgba(0, 0, 0, 0.4);
+
+  --structure-label-shadow: 0 3px 12px rgba(0, 0, 0, 0.55);
+
+  --structure-status-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+
+  --text-shadow-strong: 0 1px 2px rgba(0, 0, 0, 0.9);
+
+  --text-shadow-medium: 0 1px 3px rgba(0, 0, 0, 0.9);
+
+  --text-shadow-map: 0 0 8px rgba(0, 0, 0, 0.9);
+
+
+
+  /* ——— Tooltip ——— */
+
+  --tooltip-bg: rgba(6, 10, 18, 0.96);
+
+  --tooltip-border-mix: rgba(255, 255, 255, 0.18);
+
+  --shadow-tooltip: 0 6px 24px rgba(0, 0, 0, 0.55);
+
+
+
+  /* ——— Title / journey backdrop ——— */
+
+  --title-brand-accent-warm: #ffd4cc;
+
+  --title-brand-gradient: linear-gradient(
+
+    135deg,
+
+    var(--color-mix-light) 0%,
+
+    var(--text-cool) 35%,
+
+    var(--color-mix-light) 55%,
+
+    var(--title-brand-accent-warm) 80%,
+
+    var(--color-mix-light) 100%
+
+  );
+
+  --title-brand-glow: 0 0 40px color-mix(in srgb, var(--loop) 25%, transparent);
+
+  --shadow-title-play: var(--shadow-accent-md), 0 4px 20px rgba(0, 0, 0, 0.35);
+
+  --shadow-title-play-hover: 0 0 32px var(--glow-accent-pulse), 0 8px 28px rgba(0, 0, 0, 0.4);
+
+  --shadow-title-play-pulse-min: 0 0 20px color-mix(in srgb, var(--loop) 30%, transparent),
+
+    0 4px 20px rgba(0, 0, 0, 0.35);
+
+  --shadow-title-play-pulse-max: 0 0 36px var(--glow-accent-pulse), 0 4px 24px rgba(0, 0, 0, 0.4);
+
+
+
+  --journey-glow-triad: radial-gradient(circle, color-mix(in srgb, var(--triad) 55%, transparent) 0%, transparent 70%);
+
+  --journey-glow-loop: radial-gradient(circle, color-mix(in srgb, var(--loop) 50%, transparent) 0%, transparent 70%);
+
+  --journey-glow-block: radial-gradient(circle, color-mix(in srgb, var(--block) 42%, transparent) 0%, transparent 70%);
+
+  --journey-grid-line: rgba(255, 255, 255, 0.35);
+
+  --journey-mask-solid: #000;
+
+
+
+  /* ——— Setup / panel shadows ——— */
+
+  --shadow-setup-panel: 0 12px 40px rgba(0, 0, 0, 0.28);
+
+  --surface-inset-highlight: rgba(255, 255, 255, 0.04);
+
+
+
+  --shadow-setup-inset-highlight: inset 0 1px 0 var(--surface-inset-highlight);
+
+  --shadow-setup-card: 0 8px 24px rgba(0, 0, 0, 0.18);
+
+  --shadow-setup-faction-hover: 0 8px 24px rgba(0, 0, 0, 0.25);
+
+  --shadow-setup-start: 0 0 20px color-mix(in srgb, var(--loop) 28%, transparent),
+
+    0 4px 16px rgba(0, 0, 0, 0.3);
+
+  --shadow-setup-start-hover: 0 0 28px color-mix(in srgb, var(--loop) 45%, transparent),
+
+    0 8px 24px rgba(0, 0, 0, 0.35);
+
+  --shadow-build-rail-active: var(--shadow-accent-sm);
+
+  --shadow-build-dock-active: 0 0 12px color-mix(in srgb, var(--player-human) 40%, transparent);
+
+
+
+  /* ——— Dev harness ——— */
+
+  --dev-badge-ai-bg: #3d2a5c;
+
+  --dev-badge-ai-text: #c9a0ff;
+
+  --dev-badge-human-bg: #1e3a5f;
+
+  --dev-enemy-hover: #c94a3a;
+
+
+
+  /* ——— Build invalid pattern ——— */
+
+  --build-invalid-stripe-a: var(--build-invalid-fill);
+
+  --build-invalid-stripe-b: rgba(120, 40, 30, 0.28);
+
+
+
+  /* ——— Shared map/HUD chrome buttons ——— */
+
+  --chrome-btn-bg: var(--surface-muted);
+
+  --chrome-btn-border: var(--border-strong);
+
+  --chrome-btn-hover-bg: var(--accent);
+
+  --chrome-btn-hover-text: var(--text-on-accent);
+
+}
+
+

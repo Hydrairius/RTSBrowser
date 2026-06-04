@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "description": "Three playable factions. Visual and mechanical details expand in features/factions and features/rendering.",
+  "factions": [
+    {
+      "id": "triad",
+      "displayName": "Triad",
+      "primaryShape": "triangle",
+      "tagline": "Sharp pressure, flanks, and burst damage",
+      "description": "The Triad believes victory comes from striking where the enemy is weakest — three forces meeting at a single point.",
+      "backgroundStory": "Born from frontier cadres who learned to win with half the numbers, Triad war doctrine treats every battlefield as a wedge. Their prisms catch light like drawn blades; when three fronts align, the line does not hold — it breaks.",
+      "visualIdentity": {
+        "silhouette": "Pointed caps, chevrons, wedge formations",
+        "paletteHint": "Warm accent (e.g. amber/coral) on dark ground"
+      },
+      "playIdentity": {
+        "strengths": ["Aggression", "mobility", "pick fights on favorable terms"],
+        "weaknesses": ["Fragile front line", "punished if caught rebuilding"]
+      },
+      "prototypeUnits": ["scout-triangle", "fighter-triangle", "hq-triangle-prism"]
+    },
+    {
+      "id": "loop",
+      "displayName": "Loop",
+      "primaryShape": "circle",
+      "tagline": "Flow, sustain, and encirclement",
+      "description": "Loop commanders trade burst for rhythm, wearing opponents down in widening circles until escape is impossible.",
+      "backgroundStory": "Ancient cartographers mapped the world as nested rings; Loop engineers rebuilt that map in steel and motion. Their formations breathe — retreat, sustain, encircle — until the enemy finds themselves orbiting a center they can never reach.",
+      "visualIdentity": {
+        "silhouette": "Discs, rings, orbit trails; soft motion reads",
+        "paletteHint": "Cool accent (e.g. cyan/teal) on dark ground"
+      },
+      "playIdentity": {
+        "strengths": ["Healing/regen themes", "kiting", "area control"],
+        "weaknesses": ["Lower burst", "needs time to scale"]
+      },
+      "prototypeUnits": ["scout-circle", "fighter-circle", "hq-circle-ring"]
+    },
+    {
+      "id": "block",
+      "displayName": "Block",
+      "primaryShape": "square",
+      "tagline": "Anchors, production, and held ground",
+      "description": "Block doctrine is simple: hold the line, expand the grid, and let production outlast anything that cannot push through.",
+      "backgroundStory": "When the first breach walls fell, survivors stacked what remained into perfect squares and called it home. Block builds nothing temporary. Every bracket, every monolith, every slow march forward is another cell in a lattice that intends to stay.",
+      "visualIdentity": {
+        "silhouette": "Rects, brackets, grid snaps; heavy bases",
+        "paletteHint": "Neutral accent (e.g. lime/olive) on dark ground"
+      },
+      "playIdentity": {
+        "strengths": ["Defense", "economy", "slow push"],
+        "weaknesses": ["Slow rotation on map", "vulnerable to bypass"]
+      },
+      "prototypeUnits": ["scout-square", "fighter-square", "hq-square-monolith"]
+    }
+  ]
+}

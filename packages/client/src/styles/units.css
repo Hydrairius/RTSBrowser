@@ -1,0 +1,474 @@
+/**
+ * Units, selection, combat VFX.
+ * Faction = triangle / circle / square; role = size + fill vs ring + core.
+ */
+
+.match-units {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.field-unit {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--unit-size, 36px);
+  height: var(--unit-size, 36px);
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.field-unit-glyph {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--faction-color) 78%, var(--color-mix-dark));
+  box-shadow: 0 0 14px color-mix(in srgb, var(--faction-color) 50%, transparent);
+}
+
+.field-unit-core {
+  display: none;
+}
+
+/* --- Faction silhouettes --- */
+
+.faction-theme-triad .field-unit-glyph--striker {
+  clip-path: var(--shape-triad-striker);
+  background: color-mix(in srgb, var(--faction-color) 82%, var(--unit-striker-mix));
+}
+
+.faction-theme-triad .field-unit-glyph--bolter {
+  clip-path: var(--shape-triad-bolter);
+  background: color-mix(in srgb, var(--faction-color) 22%, var(--color-mix-dark));
+  border: 3px solid color-mix(in srgb, var(--faction-color) 92%, var(--unit-bolter-mix));
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--faction-color) 55%, transparent),
+    inset 0 0 8px color-mix(in srgb, var(--faction-color) 30%, transparent);
+}
+
+.faction-theme-loop .field-unit-glyph--striker {
+  border-radius: var(--shape-loop-striker-radius);
+  background: color-mix(in srgb, var(--faction-color) 80%, var(--unit-striker-mix));
+}
+
+.faction-theme-loop .field-unit-glyph--bolter {
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--faction-color) 18%, var(--color-mix-dark));
+  border: 3px solid color-mix(in srgb, var(--faction-color) 88%, var(--unit-bolter-mix));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--faction-color) 50%, transparent);
+}
+
+.faction-theme-loop .field-unit-glyph--bolter .field-unit-core {
+  display: block;
+  position: absolute;
+  width: 42%;
+  height: 42%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--faction-color) 90%, var(--color-mix-light));
+}
+
+.faction-theme-block .field-unit-glyph--striker {
+  border-radius: var(--shape-block-radius);
+  inset: var(--shape-block-striker-inset);
+  background: color-mix(in srgb, var(--faction-color) 78%, var(--unit-striker-mix));
+}
+
+.faction-theme-block .field-unit-glyph--bolter {
+  border-radius: var(--shape-block-radius);
+  inset: var(--shape-block-bolter-inset);
+  background: color-mix(in srgb, var(--faction-color) 20%, var(--color-mix-dark));
+  border: 3px solid color-mix(in srgb, var(--faction-color) 90%, var(--unit-bolter-mix));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--faction-color) 48%, transparent);
+}
+
+.faction-theme-block .field-unit-glyph--bolter .field-unit-core {
+  display: block;
+  position: absolute;
+  inset: 22%;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--faction-color) 85%, var(--color-mix-light));
+}
+
+.faction-theme-triad .field-unit-glyph--bolter .field-unit-core {
+  display: block;
+  position: absolute;
+  width: 34%;
+  height: 34%;
+  left: 50%;
+  top: 54%;
+  transform: translate(-50%, -50%);
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  background: color-mix(in srgb, var(--faction-color) 92%, var(--unit-bolter-mix));
+  box-shadow: 0 0 6px color-mix(in srgb, var(--faction-color) 70%, transparent);
+}
+
+.field-unit-enemy .field-unit-glyph {
+  filter: saturate(0.85) brightness(0.92);
+}
+
+.unit-striker {
+  z-index: 3;
+}
+
+.unit-bolter {
+  z-index: 2;
+}
+
+.unit-worker {
+  z-index: 1;
+}
+
+/* Worker — pentagon / small circle / chamfered square (non-combat, still readable) */
+.faction-theme-triad .field-unit-glyph--worker {
+  clip-path: polygon(50% 6%, 92% 36%, 78% 94%, 22% 94%, 8% 36%);
+  background: color-mix(in srgb, var(--faction-color) 65%, var(--unit-worker-mix-alt));
+  border: 2px solid color-mix(in srgb, var(--faction-color) 88%, var(--color-mix-light));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--faction-color) 40%, transparent);
+}
+
+.faction-theme-loop .field-unit-glyph--worker {
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--faction-color) 62%, var(--unit-worker-mix));
+  border: 2px solid color-mix(in srgb, var(--faction-color) 86%, var(--color-mix-light));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--faction-color) 38%, transparent);
+}
+
+.faction-theme-block .field-unit-glyph--worker {
+  border-radius: 3px;
+  inset: 3px;
+  background: color-mix(in srgb, var(--faction-color) 68%, var(--unit-worker-mix-block));
+  border: 2px solid color-mix(in srgb, var(--faction-color) 88%, var(--color-mix-light));
+  box-shadow: 0 0 6px color-mix(in srgb, var(--faction-color) 35%, transparent);
+}
+
+.barracks-train-glyph.train-worker {
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--faction-color) 75%, var(--unit-worker-mix-train));
+  animation: barracks-train-pulse 1s ease-in-out infinite;
+}
+
+.field-unit-gathering .field-unit-glyph--worker {
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--vfx-ranged) 70%, var(--faction-color)),
+    0 0 6px color-mix(in srgb, var(--faction-color) 60%, transparent);
+  animation: worker-gather-pulse 0.9s ease-in-out infinite;
+}
+
+.field-unit-constructing .field-unit-glyph--worker {
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--vfx-melee) 65%, var(--faction-color)),
+    0 0 6px color-mix(in srgb, var(--faction-color) 50%, transparent);
+  animation: worker-build-pulse 0.75s ease-in-out infinite;
+}
+
+.worker-build-fx {
+  position: absolute;
+  inset: -4px;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 4;
+}
+
+.worker-build-spark {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--vfx-melee-spark);
+  box-shadow: 0 0 6px var(--vfx-melee-spark-glow);
+  animation: worker-build-spark 0.85s ease-in-out infinite;
+}
+
+.worker-build-spark:nth-child(1) {
+  right: 8%;
+  top: 15%;
+  animation-delay: 0s;
+}
+
+.worker-build-spark:nth-child(2) {
+  left: 10%;
+  bottom: 20%;
+  animation-delay: 0.4s;
+}
+
+@keyframes worker-build-pulse {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.22);
+  }
+}
+
+@keyframes worker-build-spark {
+  0%,
+  100% {
+    transform: translateY(0) scale(0.6);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(-5px) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes worker-gather-pulse {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.25);
+  }
+}
+
+.hq-selected-ring {
+  position: absolute;
+  inset: -5px;
+  border: 2px solid var(--vfx-ranged-soft);
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  animation: barracks-pulse 1.2s ease-in-out infinite;
+  z-index: 2;
+}
+
+.field-unit-selected::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 2px solid var(--vfx-ranged-bright);
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  animation: unit-select-pulse 1.2s ease-in-out infinite;
+}
+
+.faction-theme-loop.field-unit-selected::after {
+  border-radius: 50%;
+}
+
+@keyframes unit-select-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.unit-hp-track {
+  position: absolute;
+  left: -10px;
+  right: -10px;
+  top: -12px;
+  height: 5px;
+  background: var(--hp-track-bg);
+  border-radius: 3px;
+  overflow: hidden;
+  pointer-events: none;
+  box-shadow: var(--hp-track-shadow);
+}
+
+.unit-hp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--hp-fill-healthy-start), var(--hp-fill-healthy-end));
+  transition: width 0.1s linear;
+}
+
+.unit-bolter .unit-hp-fill {
+  background: linear-gradient(90deg, var(--hp-fill-ranged-start), var(--hp-fill-ranged-end));
+}
+
+.structure-hp-track {
+  position: absolute;
+  top: 4px;
+  left: 6%;
+  right: 6%;
+  height: 6px;
+  background: var(--hp-track-bg-soft);
+  border-radius: 3px;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+  box-shadow: var(--hp-track-shadow-soft);
+}
+
+.structure-hp-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--hp-fill-structure-damaged-start),
+    var(--hp-fill-structure-damaged-end)
+  );
+  transition: width 0.12s linear;
+}
+
+.field-structure.structure-built .structure-hp-fill {
+  background: linear-gradient(90deg, var(--hp-fill-built-start), var(--faction-color));
+}
+
+.match-selection-box {
+  position: fixed;
+  border: 1px solid var(--vfx-selection-border);
+  background: var(--vfx-selection-fill);
+  pointer-events: none;
+  z-index: 50;
+  display: none;
+}
+
+.match-selection-box.is-active {
+  display: block;
+}
+
+.melee-swing {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  margin-left: -18px;
+  margin-top: -18px;
+  border: 3px solid var(--vfx-melee);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: melee-swing 0.35s ease-out forwards;
+  box-shadow: 0 0 12px var(--vfx-melee-ring-glow);
+}
+
+@keyframes melee-swing {
+  0% {
+    transform: scale(0.4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+.field-projectile {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--vfx-melee-bright);
+  box-shadow: 0 0 10px var(--vfx-melee-spark-glow);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.barracks-selected-ring {
+  position: absolute;
+  inset: -4px;
+  border: 2px dashed color-mix(in srgb, var(--faction-color) 80%, var(--color-mix-light));
+  pointer-events: none;
+  z-index: 2;
+  animation: barracks-pulse 1s ease-in-out infinite;
+}
+
+@keyframes barracks-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.match-train-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--vfx-selection-divider);
+}
+
+.match-train-rail.hidden {
+  display: none;
+}
+
+.train-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
+  background: var(--surface-action);
+  border: 1px solid var(--vfx-selection-btn-border);
+  color: var(--text);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.train-btn:hover {
+  border-color: var(--accent);
+}
+
+.train-btn-glyph {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.faction-theme-triad .train-btn-glyph--striker {
+  background: color-mix(in srgb, var(--faction-color) 75%, var(--color-mix-dark));
+  clip-path: var(--shape-triad-striker);
+}
+
+.faction-theme-triad .train-btn-glyph--bolter {
+  background: color-mix(in srgb, var(--faction-color) 22%, var(--color-mix-dark));
+  border: 2px solid color-mix(in srgb, var(--faction-color) 85%, var(--unit-bolter-mix));
+  clip-path: var(--shape-triad-bolter);
+  box-shadow: inset 0 -5px 0 5px color-mix(in srgb, var(--faction-color) 75%, var(--unit-bolter-mix));
+}
+
+.faction-theme-loop .train-btn-glyph--striker {
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--faction-color) 75%, var(--color-mix-dark));
+}
+
+.faction-theme-loop .train-btn-glyph--bolter {
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid color-mix(in srgb, var(--faction-color) 80%, var(--unit-bolter-mix));
+}
+
+.faction-theme-block .train-btn-glyph--striker {
+  border-radius: var(--shape-block-radius);
+  background: color-mix(in srgb, var(--faction-color) 75%, var(--color-mix-dark));
+}
+
+.faction-theme-block .train-btn-glyph--bolter {
+  border-radius: var(--shape-block-radius);
+  background: color-mix(in srgb, var(--faction-color) 18%, var(--color-mix-dark));
+  border: 2px solid color-mix(in srgb, var(--faction-color) 82%, var(--unit-bolter-mix));
+  box-shadow: inset 0 0 0 4px color-mix(in srgb, var(--faction-color) 55%, var(--color-mix-light));
+}
+
+.train-btn-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.train-btn-melee .train-btn-tag {
+  color: var(--vfx-melee);
+}
+
+.train-btn-ranged .train-btn-tag {
+  color: var(--vfx-ranged);
+}

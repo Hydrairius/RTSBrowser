@@ -1,0 +1,547 @@
+/**
+ * Map structures — silhouette is faction glyph only (no rectangular shells).
+ */
+
+.match-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-color: var(--map-grid-bg);
+  background-image:
+    linear-gradient(var(--map-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--map-grid-line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.match-world.is-building .match-grid {
+  opacity: 1;
+}
+
+.match-structures {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.field-structure {
+  position: absolute;
+  box-sizing: border-box;
+  border: none;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--match-structure-label-size);
+  color: var(--match-billboard-accent);
+  pointer-events: auto;
+  cursor: pointer;
+  overflow: visible;
+  box-shadow: none;
+}
+
+.structure-glyph {
+  position: absolute;
+  inset: 4%;
+  z-index: 0;
+  background: color-mix(in srgb, var(--faction-color) 48%, transparent);
+  pointer-events: none;
+  transition:
+    opacity 0.2s,
+    filter 0.2s;
+}
+
+.faction-theme-triad .structure-glyph {
+  clip-path: var(--shape-triad);
+  border-radius: 0;
+}
+
+.faction-theme-loop .structure-glyph {
+  clip-path: none;
+  border-radius: var(--shape-loop-radius);
+}
+
+.faction-theme-block .structure-glyph {
+  clip-path: none;
+  border-radius: var(--shape-block-radius);
+}
+
+.field-structure.structure-built .structure-glyph {
+  background: color-mix(in srgb, var(--faction-color) 58%, var(--color-mix-dark));
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--faction-color) 45%, transparent),
+    inset 0 0 16px var(--structure-glyph-inset-shadow);
+}
+
+.faction-theme-triad.structure-built .structure-glyph,
+.faction-theme-triad.structure-building .structure-glyph {
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--faction-color) 60%, transparent));
+}
+
+.field-structure.structure-hq.faction-theme-triad .structure-glyph {
+  clip-path: var(--shape-triad-hq);
+  inset: 6%;
+}
+
+.field-structure.structure-hq.faction-theme-loop .structure-glyph {
+  inset: 8%;
+  background: transparent;
+  border: 5px solid var(--faction-color);
+  border-radius: var(--shape-loop-radius);
+  box-shadow:
+    inset 0 0 0 10px color-mix(in srgb, var(--faction-color) 22%, transparent),
+    0 0 18px color-mix(in srgb, var(--faction-color) 50%, transparent);
+}
+
+.field-structure.structure-hq.faction-theme-block .structure-glyph {
+  inset: 4%;
+  border-radius: 0;
+  background: color-mix(in srgb, var(--faction-color) 65%, var(--color-mix-panel));
+  outline: 3px solid color-mix(in srgb, var(--faction-color) 80%, var(--color-mix-light));
+  outline-offset: -3px;
+}
+
+.field-structure.structure-building {
+  border: none;
+  background: transparent;
+  color: color-mix(in srgb, var(--faction-color) 70%, var(--structure-building-label-mix));
+  box-shadow: none;
+}
+
+.field-structure.structure-building .structure-glyph {
+  opacity: 0.5;
+}
+
+.field-structure.structure-building .structure-scaffold {
+  opacity: 1;
+  border: none;
+  background: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--faction-color) 18%, transparent),
+    color-mix(in srgb, var(--faction-color) 18%, transparent) 6px,
+    var(--structure-scaffold-stripe) 6px,
+    var(--structure-scaffold-stripe) 12px
+  );
+}
+
+.faction-theme-triad.structure-building .structure-scaffold {
+  clip-path: var(--shape-triad-scaffold);
+  border-radius: 0;
+}
+
+.faction-theme-loop.structure-building .structure-scaffold {
+  clip-path: none;
+  border-radius: var(--shape-loop-radius);
+}
+
+.faction-theme-block.structure-building .structure-scaffold {
+  clip-path: none;
+  border-radius: var(--shape-block-radius);
+}
+
+.field-structure.structure-building .structure-label {
+  opacity: 0.85;
+}
+
+.field-structure.structure-built .structure-scaffold {
+  opacity: 0;
+}
+
+.field-structure.structure-just-built {
+  animation: structure-complete 0.55s ease-out;
+}
+
+@keyframes structure-complete {
+  0% {
+    filter: brightness(1);
+  }
+  40% {
+    filter: brightness(1.25);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+
+.structure-scaffold {
+  position: absolute;
+  inset: 4px;
+  opacity: 0;
+  pointer-events: none;
+  border: none;
+}
+
+/* Billboard labels — above/below footprint for readability at zoom */
+.structure-label {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, calc(-100% - 8px));
+  z-index: 5;
+  white-space: nowrap;
+  padding: 4px 10px;
+  font-size: var(--match-structure-label-size);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-align: center;
+  color: var(--match-billboard-text);
+  background: var(--match-billboard-bg);
+  border: 1px solid var(--match-billboard-border);
+  border-radius: 5px;
+  box-shadow: var(--structure-label-shadow);
+  text-shadow: var(--text-shadow-strong);
+}
+
+.structure-status {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, calc(100% + 6px));
+  z-index: 5;
+  white-space: nowrap;
+  padding: 3px 9px;
+  font-size: var(--match-structure-status-size);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: center;
+  color: var(--text-cool-bright);
+  background: var(--match-billboard-bg);
+  border: 1px solid var(--match-billboard-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--structure-status-shadow);
+  text-shadow: var(--text-shadow-strong);
+}
+
+.structure-status:empty {
+  display: none;
+}
+
+.structure-progress-track {
+  position: absolute;
+  bottom: 6px;
+  left: 12%;
+  right: 12%;
+  height: 6px;
+  background: var(--hp-track-bg-soft);
+  z-index: 2;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: var(--hp-track-shadow-bar);
+}
+
+.structure-progress-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--faction-color) 55%, var(--structure-progress-mix)),
+    var(--faction-color)
+  );
+  width: 0%;
+  transition: width 0.12s linear;
+  box-shadow: 0 0 6px color-mix(in srgb, var(--faction-color) 55%, transparent);
+}
+
+.placement-flash {
+  position: absolute;
+  box-sizing: border-box;
+  border: 2px solid var(--faction-color);
+  background: color-mix(
+    in srgb,
+    var(--faction-color) calc(var(--build-placement-flash-alpha) * 100%),
+    transparent
+  );
+  animation: placement-flash 0.65s ease-out forwards;
+  pointer-events: none;
+}
+
+.placement-flash.faction-theme-triad {
+  clip-path: var(--shape-triad);
+  border: none;
+}
+
+.placement-flash.faction-theme-loop {
+  border: none;
+  border-radius: var(--shape-loop-radius);
+}
+
+.placement-flash.faction-theme-block {
+  border: none;
+  border-radius: var(--shape-block-radius);
+}
+
+@keyframes placement-flash {
+  0% {
+    opacity: 1;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+.field-structure.structure-hq {
+  font-size: var(--match-structure-hq-label-size);
+  font-weight: 700;
+  z-index: 2;
+  box-shadow: none;
+}
+
+.field-structure.structure-hq .structure-label {
+  font-size: var(--match-structure-hq-label-size);
+  padding: 5px 12px;
+}
+
+.field-structure.structure-hq .structure-glyph {
+  box-shadow:
+    0 0 20px color-mix(in srgb, var(--faction-color) 50%, transparent),
+    inset 0 0 16px var(--structure-glyph-inset-shadow);
+}
+
+.hq-beacon {
+  position: absolute;
+  inset: -12px;
+  border: 2px solid color-mix(in srgb, var(--faction-color) 75%, var(--color-mix-light));
+  border-radius: 0;
+  animation: hq-pulse 2s ease-in-out infinite;
+  pointer-events: none;
+  background: transparent;
+}
+
+.field-structure.faction-theme-triad .hq-beacon {
+  clip-path: var(--shape-triad-hq);
+  border: none;
+  background: color-mix(in srgb, var(--faction-color) 25%, transparent);
+}
+
+.field-structure.faction-theme-loop .hq-beacon {
+  border: 2px solid var(--faction-color);
+  border-radius: var(--shape-loop-radius);
+  background: transparent;
+}
+
+.field-structure.faction-theme-block .hq-beacon {
+  border: 2px solid var(--faction-color);
+  border-radius: 0;
+  background: color-mix(in srgb, var(--faction-color) 15%, transparent);
+}
+
+/* Construction — worker build VFX */
+.structure-build-active .structure-scaffold {
+  animation: build-scaffold-hum 1s ease-in-out infinite;
+}
+
+.build-work-fx {
+  position: absolute;
+  inset: -6px;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 4;
+}
+
+.build-work-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at 50% 85%,
+    color-mix(in srgb, var(--vfx-melee) 45%, var(--faction-color)) 0%,
+    transparent 72%
+  );
+  animation: build-glow-pulse 0.9s ease-in-out infinite;
+  opacity: 0.8;
+}
+
+.build-work-spark {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--vfx-melee-spark-soft);
+  box-shadow: 0 0 7px var(--vfx-melee-spark-glow);
+  animation: build-work-spark 0.95s ease-in-out infinite;
+}
+
+.build-work-spark:nth-child(1) {
+  left: 20%;
+  bottom: 8%;
+  animation-delay: 0s;
+}
+
+.build-work-spark:nth-child(2) {
+  right: 18%;
+  bottom: 12%;
+  animation-delay: 0.3s;
+}
+
+.build-work-spark:nth-child(3) {
+  left: 48%;
+  bottom: 4%;
+  animation-delay: 0.6s;
+}
+
+.faction-theme-triad.structure-build-active .build-work-glow {
+  clip-path: var(--shape-triad-scaffold);
+}
+
+@keyframes build-scaffold-hum {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.15);
+  }
+}
+
+@keyframes build-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes build-work-spark {
+  0%,
+  100% {
+    transform: translateY(0) scale(0.65);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-7px) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Generator — worker mining VFX */
+.structure-generator-active .structure-glyph {
+  animation: generator-core-hum 1.2s ease-in-out infinite;
+}
+
+.generator-work-fx {
+  position: absolute;
+  inset: -6px;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 4;
+}
+
+.generator-work-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at 55% 50%,
+    color-mix(in srgb, var(--vfx-ranged) 55%, var(--faction-color)) 0%,
+    transparent 70%
+  );
+  animation: generator-glow-pulse 1s ease-in-out infinite;
+  opacity: 0.85;
+}
+
+.generator-work-spark {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--vfx-ranged-pale-bg);
+  box-shadow: 0 0 8px var(--vfx-ranged);
+  animation: generator-spark 1.1s ease-in-out infinite;
+}
+
+.generator-work-spark:nth-child(1) {
+  left: 15%;
+  top: 20%;
+  animation-delay: 0s;
+}
+
+.generator-work-spark:nth-child(2) {
+  right: 10%;
+  top: 35%;
+  animation-delay: 0.35s;
+}
+
+.generator-work-spark:nth-child(3) {
+  left: 40%;
+  bottom: 5%;
+  animation-delay: 0.7s;
+}
+
+.faction-theme-triad.structure-generator-active .generator-work-glow {
+  clip-path: var(--shape-triad);
+}
+
+@keyframes generator-core-hum {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes generator-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes generator-spark {
+  0%,
+  100% {
+    transform: translateY(0) scale(0.7);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-6px) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Defensive turret — compact faction glyph, brief recoil when firing */
+.field-structure.structure-turret .structure-glyph {
+  inset: 18%;
+}
+
+.field-structure.structure-turret.structure-built .structure-glyph {
+  box-shadow:
+    0 0 14px color-mix(in srgb, var(--faction-color) 55%, transparent),
+    inset 0 0 10px var(--structure-glyph-inset-shadow-strong);
+}
+
+.field-structure.structure-turret-firing .structure-glyph {
+  animation: turret-recoil 0.22s ease-out;
+}
+
+@keyframes turret-recoil {
+  0% {
+    transform: scale(1.12);
+    filter: brightness(1.35);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes hq-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}

@@ -1,0 +1,187 @@
+/* Command card — fixed footprint, not full footer width (StarCraft-style dock). */
+.hud-selection-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: max-content;
+  max-width: min(28rem, 52vw);
+  flex-shrink: 0;
+}
+
+.hud-selection-hint {
+  line-height: 1.45;
+  font-size: 0.88rem;
+  max-width: 26rem;
+  padding: 0.65rem 0.9rem;
+  background: var(--surface-inset);
+  border: var(--panel-border);
+  border-radius: var(--radius-md);
+  color: var(--muted);
+}
+
+.hud-selection-hint.hidden {
+  display: none;
+}
+
+.hud-unit-panel {
+  display: flex;
+  align-items: stretch;
+  gap: 1rem;
+  width: max-content;
+  min-width: 22rem;
+  max-width: 28rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface-inset);
+  border: var(--panel-border);
+  border-radius: var(--radius-lg);
+  color: var(--text);
+  box-shadow: var(--shadow-hud);
+}
+
+.hud-unit-panel.hidden {
+  display: none;
+}
+
+.hud-unit-portrait {
+  flex-shrink: 0;
+  width: 5.25rem;
+  height: 5.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--portrait-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+}
+
+.hud-unit-portrait-glyph {
+  position: relative;
+  width: var(--unit-size, 42px);
+  height: var(--unit-size, 42px);
+}
+
+.hud-unit-portrait-glyph .field-unit-core {
+  position: absolute;
+  inset: 22%;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--faction-color) 55%, var(--color-mix-light));
+}
+
+.hud-unit-body {
+  flex: 0 1 11.5rem;
+  width: 11.5rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  justify-content: center;
+}
+
+.hud-unit-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.hud-unit-name {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.hud-unit-role {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.hud-unit-hp-track {
+  height: 10px;
+  background: var(--hp-fill-hud-track);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+
+.hud-unit-hp-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--hp-fill-healthy-start), var(--ok));
+  border-radius: 3px;
+  transition: width 0.12s ease-out;
+}
+
+.hud-unit-hp-fill.hud-unit-hp-low {
+  background: linear-gradient(90deg, var(--hp-fill-hud-low-start), var(--warn));
+}
+
+.hud-unit-hp-fill.hud-unit-hp-critical {
+  background: linear-gradient(90deg, var(--hp-fill-hud-critical-start), var(--err));
+}
+
+.hud-unit-hp-text {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-unit-status {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-cool-muted);
+  line-height: 1.35;
+}
+
+.hud-unit-detail {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+.hud-unit-detail.hidden {
+  display: none;
+}
+
+.hud-unit-actions {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  align-items: stretch;
+  justify-content: center;
+  min-width: 6.75rem;
+  padding-left: 0.15rem;
+  border-left: 1px solid var(--border-subtle);
+}
+
+.hud-unit-action-btn {
+  padding: 0.55rem 0.85rem !important;
+  font-size: 0.85rem !important;
+  font-weight: 600;
+  border: 1px solid var(--border-strong) !important;
+  background: var(--surface-action) !important;
+  color: var(--text) !important;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.hud-unit-action-btn:hover {
+  border-color: var(--border-focus) !important;
+  background: var(--surface-button) !important;
+}
+
+.hud-unit-action-stop {
+  border-color: color-mix(in srgb, var(--warn) 50%, var(--border-strong)) !important;
+}
+
+.hud-unit-action-hint {
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.3;
+  padding: 0 0.2rem;
+}

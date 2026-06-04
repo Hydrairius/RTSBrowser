@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "description": "Fixed matter nodes — generators may only be placed on an unclaimed deposit (one generator per node).",
+  "deposits": [
+    { "id": "human-m1", "side": "human", "gx": 14, "gy": 62 },
+    { "id": "human-m2", "side": "human", "gx": 18, "gy": 82 },
+    { "id": "human-m3", "side": "human", "gx": 30, "gy": 72 },
+    { "id": "human-m4", "side": "human", "gx": 38, "gy": 68 },
+    { "id": "human-m5", "side": "human", "gx": 42, "gy": 88 },
+    { "id": "ai-m1", "side": "ai", "gx": 128, "gy": 18 },
+    { "id": "ai-m2", "side": "ai", "gx": 132, "gy": 28 },
+    { "id": "ai-m3", "side": "ai", "gx": 145, "gy": 20 },
+    { "id": "ai-m4", "side": "ai", "gx": 148, "gy": 12 },
+    { "id": "ai-m5", "side": "ai", "gx": 140, "gy": 42 }
+  ]
+}

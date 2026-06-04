@@ -1,0 +1,378 @@
+/**
+ * Right-click move/attack markers and barracks train/deploy VFX.
+ */
+
+.match-command-vfx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+  contain: layout style paint;
+}
+
+.command-lines-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.command-move-line {
+  stroke: var(--vfx-command-move-stroke);
+  stroke-width: 2;
+  stroke-dasharray: 8 6;
+  animation: command-line-fade 1.8s ease-out forwards;
+}
+
+@keyframes command-line-fade {
+  0% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 20;
+  }
+}
+
+.command-markers-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.command-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.command-marker-move {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--vfx-command-move-border);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--faction-color) 35%, transparent) 0%,
+    transparent 70%
+  );
+  box-shadow: 0 0 14px var(--vfx-command-move-glow);
+  animation: command-move-ping 2.2s ease-out forwards;
+}
+
+.command-marker-move::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 2px solid var(--vfx-command-inner);
+  border-radius: 50%;
+  animation: command-move-inner 2.2s ease-out forwards;
+}
+
+@keyframes command-move-ping {
+  0% {
+    transform: translate(-50%, -50%) scale(0.35);
+    opacity: 1;
+  }
+  35% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.25);
+    opacity: 0;
+  }
+}
+
+@keyframes command-move-inner {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.command-marker-attack {
+  width: 44px;
+  height: 44px;
+  animation: command-attack-pulse 2.2s ease-out forwards;
+}
+
+.command-marker-attack::before,
+.command-marker-attack::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: var(--vfx-attack);
+  box-shadow: 0 0 10px var(--vfx-attack-glow);
+  transform: translate(-50%, -50%);
+}
+
+.command-marker-attack::before {
+  width: 28px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.command-marker-attack::after {
+  width: 4px;
+  height: 28px;
+  border-radius: 2px;
+}
+
+.command-marker-structure::before,
+.command-marker-structure::after {
+  background: var(--vfx-structure-target);
+  box-shadow: 0 0 12px var(--vfx-structure-target-glow);
+}
+
+.command-marker-structure {
+  border: 2px solid var(--vfx-structure-target-border);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+}
+
+@keyframes command-attack-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+    opacity: 1;
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1) rotate(12deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.1) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+.command-deploy-burst {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--faction-color);
+  background: color-mix(in srgb, var(--faction-color) 40%, transparent);
+  animation: command-deploy-pop 0.85s ease-out forwards;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 6;
+}
+
+.deploy-striker.faction-theme-triad,
+.deploy-striker.faction-theme-block {
+  clip-path: var(--shape-triad);
+  border-radius: 0;
+}
+
+.deploy-striker.faction-theme-loop {
+  border-radius: 50%;
+}
+
+.deploy-bolter {
+  outline: 2px solid var(--vfx-ranged);
+  border-radius: 2px;
+}
+
+.command-deploy-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 4px;
+  font-size: 0.65rem;
+  color: var(--vfx-ranged-pale);
+  white-space: nowrap;
+  text-shadow: var(--text-shadow-medium);
+  animation: command-deploy-label-fade 0.85s ease-out forwards;
+}
+
+@keyframes command-deploy-pop {
+  0% {
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.4);
+    opacity: 0;
+  }
+}
+
+@keyframes command-deploy-label-fade {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.barracks-train-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--vfx-overlay-scrim);
+}
+
+.barracks-train-glyph {
+  width: 30px;
+  height: 30px;
+  background: color-mix(in srgb, var(--faction-color) 70%, var(--color-mix-panel));
+  animation: barracks-train-pulse 1s ease-in-out infinite;
+}
+
+.faction-theme-triad .barracks-train-glyph {
+  clip-path: var(--shape-triad);
+}
+
+.faction-theme-loop .barracks-train-glyph {
+  border-radius: 50%;
+}
+
+.faction-theme-block .barracks-train-glyph {
+  border-radius: 2px;
+}
+
+.barracks-train-glyph.train-melee {
+  box-shadow: 0 0 8px var(--vfx-train-melee-glow);
+}
+
+.barracks-train-glyph.train-ranged {
+  outline: 2px solid var(--vfx-ranged);
+}
+
+.barracks-train-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--vfx-ranged-label);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-shadow: var(--text-shadow-medium);
+  padding: 2px 8px;
+  background: var(--vfx-overlay-scrim-strong);
+  border-radius: var(--radius-sm);
+}
+
+.barracks-train-queue {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--vfx-ranged-soft);
+  opacity: 1;
+  text-shadow: var(--text-shadow-strong);
+}
+
+.barracks-train-track {
+  width: 75%;
+  height: 7px;
+  background: var(--hp-track-bg-soft);
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: var(--hp-track-shadow-bar);
+}
+
+.barracks-train-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--vfx-train-track-start), var(--faction-color));
+  transition: width 0.1s linear;
+}
+
+.barracks-train-queued-flash {
+  animation: barracks-queued-flash 0.55s ease-out;
+}
+
+@keyframes barracks-train-pulse {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes barracks-queued-flash {
+  0% {
+    filter: brightness(1);
+  }
+  40% {
+    filter: brightness(1.5);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+
+/* Persistent rally point overlay for selected HQ / barracks */
+.production-rally-vfx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  overflow: visible;
+}
+
+.production-rally-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.production-rally-line {
+  stroke: var(--vfx-command-move-stroke);
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+  opacity: 0.85;
+}
+
+.production-rally-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--vfx-command-move-border);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--faction-color) 45%, transparent) 0%,
+    transparent 72%
+  );
+  box-shadow: 0 0 10px var(--vfx-command-move-glow);
+  pointer-events: none;
+}
+
+.production-rally-marker::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1.5px solid var(--vfx-command-inner);
+  border-radius: 50%;
+}

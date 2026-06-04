@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "description": "Screen IDs and allowed transitions for client routing. See player-journey.md for UX copy and layout.",
+  "phases": {
+    "v0": ["title", "skirmish-setup", "loading", "match", "results"],
+    "v1": ["title", "auth", "hub", "queue", "lobby", "skirmish-setup", "loading", "match", "results"]
+  },
+  "screens": [
+    {
+      "id": "title",
+      "label": "Title / attract",
+      "phase": ["v0", "v1"],
+      "primaryAction": "play"
+    },
+    {
+      "id": "auth",
+      "label": "Sign in / register / guest",
+      "phase": ["v1"],
+      "primaryAction": "continue"
+    },
+    {
+      "id": "hub",
+      "label": "Main menu",
+      "phase": ["v1"],
+      "primaryAction": "quick-match"
+    },
+    {
+      "id": "queue",
+      "label": "Matchmaking",
+      "phase": ["v1"],
+      "primaryAction": "cancel"
+    },
+    {
+      "id": "lobby",
+      "label": "Multiplayer lobby",
+      "phase": ["v1"],
+      "primaryAction": "ready"
+    },
+    {
+      "id": "skirmish-setup",
+      "label": "Skirmish / local setup",
+      "phase": ["v0", "v1"],
+      "primaryAction": "start-match"
+    },
+    {
+      "id": "loading",
+      "label": "Load assets and sync",
+      "phase": ["v0", "v1"],
+      "primaryAction": null
+    },
+    {
+      "id": "match",
+      "label": "In-match HUD + viewport",
+      "phase": ["v0", "v1"],
+      "primaryAction": null
+    },
+    {
+      "id": "results",
+      "label": "Victory / defeat",
+      "phase": ["v0", "v1"],
+      "primaryAction": "rematch"
+    }
+  ],
+  "overlays": [
+    { "id": "settings", "parentScreens": ["title", "hub", "match"] },
+    { "id": "pause", "parentScreens": ["match"] },
+    { "id": "surrender-confirm", "parentScreens": ["match"] },
+    { "id": "disconnect", "parentScreens": ["match", "queue", "lobby"] }
+  ],
+  "transitions": [
+    { "from": "title", "event": "play-v0", "to": "skirmish-setup" },
+    { "from": "title", "event": "play-v1", "to": "hub", "guard": "session-valid" },
+    { "from": "title", "event": "play-v1", "to": "auth", "guard": "no-session" },
+    { "from": "auth", "event": "auth-success", "to": "hub" },
+    { "from": "hub", "event": "quick-match", "to": "queue" },
+    { "from": "hub", "event": "skirmish", "to": "skirmish-setup" },
+    { "from": "hub", "event": "custom-game", "to": "lobby" },
+    { "from": "queue", "event": "match-found", "to": "lobby" },
+    { "from": "queue", "event": "cancel", "to": "hub" },
+    { "from": "skirmish-setup", "event": "start-match", "to": "loading" },
+    { "from": "lobby", "event": "all-ready", "to": "loading" },
+    { "from": "loading", "event": "ready", "to": "match" },
+    { "from": "match", "event": "match-ended", "to": "results" },
+    { "from": "match", "event": "forfeit-exit", "to": "hub" },
+    { "from": "results", "event": "rematch", "to": "skirmish-setup" },
+    { "from": "results", "event": "rematch-online", "to": "lobby" },
+    { "from": "results", "event": "main-menu", "to": "title" },
+    { "from": "results", "event": "hub", "to": "hub" },
+    { "from": "results", "event": "queue-again", "to": "queue" }
+  ],
+  "openDecisions": [
+    "duplicate-factions-1v1",
+    "win-condition-default",
+    "online-rematch-flow",
+    "ranked-casual-split"
+  ]
+}

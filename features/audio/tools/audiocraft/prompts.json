@@ -1,0 +1,97 @@
+{
+  "sounds": {
+    "ui.click": {
+      "engine": "audiogen",
+      "prompt": "short crisp geometric user interface click, soft digital tap, clean",
+      "duration": 1
+    },
+    "ui.open": {
+      "engine": "audiogen",
+      "prompt": "menu panel opening swoosh, subtle sci-fi UI, brief",
+      "duration": 1.5
+    },
+    "purchase.worker": {
+      "engine": "audiogen",
+      "prompt": "soft pleasant UI confirmation chime, warm muted synth blip, gentle resource queue, not harsh, low pitch",
+      "duration": 0.7
+    },
+    "purchase.unit": {
+      "engine": "audiogen",
+      "prompt": "soft pleasant military training queued chime, warm muted synth tone, gentle tactical confirm, not harsh, low pitch",
+      "duration": 0.8
+    },
+    "purchase.structure": {
+      "engine": "audiogen",
+      "prompt": "confirm structure construction order placed, foundation stamp thud, RTS build menu",
+      "duration": 1.5
+    },
+    "select.unit": {
+      "engine": "audiogen",
+      "prompt": "very low pitch soft 8-bit chiptone unit select blip, deep warm bass square wave, muted retro RTS, gentle thud, not bright not shrill",
+      "duration": 0.3
+    },
+    "select.structure": {
+      "engine": "audiogen",
+      "prompt": "pleasant soft 8-bit chiptone building select blip, retro strategy game, warm square wave, slightly lower pitch, not harsh",
+      "duration": 0.4
+    },
+    "build.complete": {
+      "engine": "audiogen",
+      "prompt": "structure construction complete, satisfying metallic lock-in, factory bay",
+      "duration": 2
+    },
+    "unit.deploy": {
+      "engine": "audiogen",
+      "prompt": "very low pitch soft 8-bit chiptone unit spawn blip, deep warm bass confirm, muted retro RTS produced sound, gentle not shrill",
+      "duration": 0.45
+    },
+    "combat.attack.ranged": {
+      "engine": "audiogen",
+      "prompt": "short sci-fi ranged weapon fire, energy bolt launch, RTS combat",
+      "duration": 0.8
+    },
+    "combat.attack.melee": {
+      "engine": "audiogen",
+      "prompt": "quick melee strike whoosh, geometric shape clash, RTS combat",
+      "duration": 0.7
+    },
+    "combat.hit": {
+      "engine": "audiogen",
+      "prompt": "projectile impact on armor, brief metallic hit, RTS combat",
+      "duration": 0.8
+    },
+    "unit.destroyed": {
+      "engine": "audiogen",
+      "prompt": "unit destroyed explosion dissolve, brief geometric shatter, RTS game",
+      "duration": 1.2
+    },
+    "sting.victory": {
+      "engine": "audiogen",
+      "prompt": "two second victory fanfare sting, triumphant minimal synth, game win",
+      "duration": 2.5
+    },
+    "sting.defeat": {
+      "engine": "audiogen",
+      "prompt": "two second defeat sting, somber descending tone, game loss",
+      "duration": 2.5
+    },
+    "music.landing": {
+      "engine": "musicgen",
+      "model": "facebook/musicgen-small",
+      "prompt": "eerie abstract war ambience for strategy game title screen, ominous geometric minimalist synth, tense distant drums and low drones, dark electronic, loopable, no vocals",
+      "duration": 45
+    },
+    "music.menu": {
+      "engine": "musicgen",
+      "model": "facebook/musicgen-small",
+      "prompt": "ambient minimal electronic menu music, calm geometric shapes, loopable, no vocals, steady pulse",
+      "duration": 30
+    },
+    "music.match": {
+      "engine": "musicgen",
+      "model": "facebook/musicgen-small",
+      "prompt": "tense real-time strategy skirmish underscore, low intensity, loopable, no vocals, rhythmic",
+      "duration": 45
+    }
+  }
+}

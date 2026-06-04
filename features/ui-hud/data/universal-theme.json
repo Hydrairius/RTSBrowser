@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "description": "Universal UI theme for RTSBrowser client chrome. Implemented as CSS custom properties in packages/client/src/styles/tokens.css; TS mirror in packages/client/src/theme/index.ts.",
+  "alignsWith": [
+    "features/game-vision/data/factions.json",
+    "features/rendering/data/visual-theme.md"
+  ],
+  "tokens": {
+    "color": {
+      "bg": "#0f1419",
+      "surface": "#1a2332",
+      "text": "#e8eef4",
+      "textMuted": "#8b9cb3",
+      "accent": "#4a9eff",
+      "success": "#3dd68c",
+      "warning": "#f5a623",
+      "error": "#ff6b6b",
+      "border": "#2d3a4d",
+      "borderStrong": "#3d5168",
+      "borderFocus": "#5eb3ff",
+      "surfaceRaised": "#151d28",
+      "surfaceInset": "#121a24",
+      "colorMixLight": "#ffffff",
+      "colorMixDark": "#0c1218"
+    },
+    "faction": {
+      "triad": "#e85d4a",
+      "loop": "#4a9eff",
+      "block": "#c9a227",
+      "runtimeVar": "--faction-color",
+      "themeClassPrefix": "faction-theme-",
+      "note": "--loop is faction identity (units, lore, resource HUD). Distinct from --player-human skirmish chrome."
+    },
+    "player": {
+      "humanAccent": "#5eb3ff",
+      "aiAccent": "#e85d4a",
+      "note": "Skirmish ownership chrome: minimap markers, zone tints, wayfinder, focus rings (--border-focus = --player-human)."
+    },
+    "mapWorld": {
+      "cssPrefix": "--map-|--matter-|--zone-|--hq-bowl-|--nav-lane-|--wayfinder-|--minimap-",
+      "groups": ["barriers", "matterDeposits", "zones", "hqBowls", "navLanes", "wayfinder", "minimapChrome"]
+    },
+    "vfxCombat": {
+      "cssPrefix": "--vfx-",
+      "groups": ["commandMarkers", "meleeRanged", "attackTarget", "selectionBox", "trainOverlay"]
+    },
+    "hpBars": {
+      "cssPrefix": "--hp-",
+      "groups": ["track", "fillHealthy", "fillRanged", "fillStructure", "fillHud"]
+    },
+    "titleJourney": {
+      "cssPrefix": "--title-|--journey-|--shadow-title-|--shadow-setup-",
+      "groups": ["brandGradient", "backdropGlows", "setupPanelShadows"]
+    },
+    "tooltip": {
+      "cssPrefix": "--tooltip-|--text-tooltip-",
+      "groups": ["background", "semanticText"]
+    },
+    "typography": {
+      "fontSans": "system-ui, sans-serif",
+      "fontMono": "ui-monospace, monospace",
+      "sizes": ["2xs", "xs", "sm", "md", "base", "lg", "xl", "2xl"],
+      "cssPrefix": "--font-size-"
+    },
+    "spacing": {
+      "scale": ["1", "2", "3", "4", "5", "6", "8", "10"],
+      "unit": "0.25rem base (4px)",
+      "cssPrefix": "--space-"
+    },
+    "radius": {
+      "scale": ["sm", "md", "lg", "xl", "2xl", "3xl", "pill"],
+      "cssPrefix": "--radius-"
+    },
+    "component": {
+      "button": ["--btn-radius", "--btn-secondary-bg", "--chrome-btn-bg"],
+      "panel": ["--panel-radius", "--panel-border"],
+      "input": ["--input-radius", "--input-border", "--input-bg"],
+      "hud": ["--hud-card-bg", "--hud-minimap-bg", "--hud-bar-height"]
+    }
+  },
+  "stylesheetOrder": [
+    "tokens.css",
+    "journey-shell.css",
+    "title.css",
+    "setup.css",
+    "build-preview.css",
+    "structures.css",
+    "units.css",
+    "command-vfx.css",
+    "tooltip.css",
+    "hud-unit-panel.css",
+    "style.css (global layout + match chrome)"
+  ],
+  "screens": {
+    "journey": ["title", "skirmish-setup", "loading", "results"],
+    "match": ["hud-top", "build-rail", "minimap-card", "footer-selection", "overlays-pause"],
+    "field": ["viewport", "tooltips", "build-preview", "command-vfx"]
+  }
+}

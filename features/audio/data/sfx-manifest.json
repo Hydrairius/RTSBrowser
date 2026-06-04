@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "sounds": {
+    "ui.click": {
+      "src": "/audio/sfx/ui/click.wav",
+      "category": "sfx",
+      "volume": 0.7
+    },
+    "ui.open": {
+      "src": "/audio/sfx/ui/open.wav",
+      "category": "sfx",
+      "volume": 0.75
+    },
+    "purchase.worker": {
+      "src": "/audio/sfx/purchase/worker.wav",
+      "category": "sfx",
+      "volume": 0.55
+    },
+    "purchase.unit": {
+      "src": "/audio/sfx/purchase/unit.wav",
+      "category": "sfx",
+      "volume": 0.58
+    },
+    "purchase.structure": {
+      "src": "/audio/sfx/purchase/structure.wav",
+      "category": "sfx",
+      "volume": 0.85
+    },
+    "select.unit": {
+      "src": "/audio/sfx/select/unit.wav",
+      "category": "sfx",
+      "volume": 0.42
+    },
+    "select.structure": {
+      "src": "/audio/sfx/select/structure.wav",
+      "category": "sfx",
+      "volume": 0.62
+    },
+    "build.complete": {
+      "src": "/audio/sfx/build/complete.wav",
+      "category": "sfx",
+      "volume": 0.85
+    },
+    "unit.deploy": {
+      "src": "/audio/sfx/unit/deploy.wav",
+      "category": "sfx",
+      "volume": 0.42
+    },
+    "combat.attack.ranged": {
+      "src": "/audio/sfx/combat/attack-ranged.wav",
+      "category": "sfx",
+      "volume": 0.65
+    },
+    "combat.attack.melee": {
+      "src": "/audio/sfx/combat/attack-melee.wav",
+      "category": "sfx",
+      "volume": 0.7
+    },
+    "combat.hit": {
+      "src": "/audio/sfx/combat/hit.wav",
+      "category": "sfx",
+      "volume": 0.75
+    },
+    "unit.destroyed": {
+      "src": "/audio/sfx/unit/destroyed.wav",
+      "category": "sfx",
+      "volume": 0.85
+    },
+    "sting.victory": {
+      "src": "/audio/sfx/sting/victory.wav",
+      "category": "sfx",
+      "volume": 1
+    },
+    "sting.defeat": {
+      "src": "/audio/sfx/sting/defeat.wav",
+      "category": "sfx",
+      "volume": 0.9
+    },
+    "music.landing": {
+      "src": "/audio/music/landing.wav",
+      "category": "music",
+      "loop": true,
+      "volume": 0.5
+    },
+    "music.menu": {
+      "src": "/audio/music/menu.wav",
+      "category": "music",
+      "loop": true,
+      "volume": 0.45
+    },
+    "music.match": {
+      "src": "/audio/music/match.wav",
+      "category": "music",
+      "loop": true,
+      "volume": 0.35
+    }
+  }
+}

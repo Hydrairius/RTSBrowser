@@ -1,0 +1,211 @@
+/**
+ * Build mode: valid-tile highlights, snap outline, and placement ghost.
+ * Uses CSS variables from tokens.css (--build-*).
+ */
+
+.build-preview {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.build-preview__range {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.build-preview__range-cell {
+  position: absolute;
+  box-sizing: border-box;
+  background: var(--build-range-fill);
+  outline: none;
+  box-shadow: inset 0 0 0 1px var(--build-range-outline);
+}
+
+.build-preview__range.faction-theme-triad .build-preview__range-cell {
+  clip-path: var(--shape-triad-cell);
+}
+
+.build-preview__range.faction-theme-loop .build-preview__range-cell {
+  border-radius: var(--shape-loop-radius);
+}
+
+.build-preview__range.faction-theme-block .build-preview__range-cell {
+  border-radius: var(--shape-block-radius);
+}
+
+/* Snap ring — sits under ghost fill */
+.build-preview__snap {
+  position: absolute;
+  box-sizing: border-box;
+  pointer-events: none;
+  z-index: 5;
+  border: var(--build-ghost-border-width) solid
+    color-mix(in srgb, var(--faction-color) calc(var(--build-snap-border-alpha) * 100%), var(--color-mix-light));
+  background: color-mix(
+    in srgb,
+    var(--faction-color) calc(var(--build-snap-fill-alpha) * 100%),
+    transparent
+  );
+  box-shadow: 0 0 var(--build-ghost-glow-spread)
+    color-mix(in srgb, var(--faction-color) calc(var(--build-ghost-glow-alpha) * 100%), transparent);
+}
+
+.build-preview__snap.faction-theme-triad {
+  clip-path: var(--shape-triad-cell);
+  border: none;
+  background: color-mix(
+    in srgb,
+    var(--faction-color) calc(var(--build-snap-fill-alpha) * 100% + 4%),
+    transparent
+  );
+}
+
+.build-preview__snap.faction-theme-loop {
+  border: none;
+  border-radius: var(--shape-loop-radius);
+}
+
+.build-preview__snap.faction-theme-block {
+  border: none;
+  border-radius: var(--shape-block-radius);
+}
+
+.build-preview__snap.is-invalid {
+  border-color: var(--build-invalid-border);
+  background: var(--build-invalid-fill);
+  box-shadow: 0 0 12px var(--build-invalid-glow);
+}
+
+.build-preview__snap.is-hidden,
+.build-preview__ghost.is-hidden {
+  display: none;
+}
+
+/* Ghost — primary hover/placement preview */
+.build-preview__ghost {
+  position: absolute;
+  box-sizing: border-box;
+  pointer-events: none;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.build-preview__ghost-fill {
+  position: absolute;
+  inset: 0;
+  border: var(--build-ghost-border-width) solid
+    color-mix(in srgb, var(--faction-color) 92%, var(--color-mix-light));
+  background: repeating-linear-gradient(
+    -45deg,
+    color-mix(
+      in srgb,
+      var(--faction-color) calc(var(--build-ghost-stripe-alpha) * 100%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--faction-color) calc(var(--build-ghost-stripe-alpha) * 100%),
+      transparent
+    )
+    8px,
+    color-mix(in srgb, var(--faction-color) calc(var(--build-ghost-fill-alpha) * 100%), var(--color-mix-dark)) 8px,
+    color-mix(in srgb, var(--faction-color) calc(var(--build-ghost-fill-alpha) * 100%), var(--color-mix-dark)) 16px
+  );
+  box-shadow:
+    0 0 var(--build-ghost-glow-spread)
+      color-mix(in srgb, var(--faction-color) calc(var(--build-ghost-glow-alpha) * 100%), transparent),
+    inset 0 0 22px
+      color-mix(in srgb, var(--faction-color) calc(var(--build-ghost-inset-glow-alpha) * 100%), transparent);
+  animation: build-ghost-pulse var(--build-ghost-pulse-duration) ease-in-out infinite;
+}
+
+.build-preview__ghost.faction-theme-triad .build-preview__ghost-fill {
+  clip-path: var(--shape-triad-cell);
+  border: none;
+  border-radius: 0;
+}
+
+.build-preview__ghost.faction-theme-loop .build-preview__ghost-fill {
+  border: none;
+  border-radius: var(--shape-loop-radius);
+}
+
+.build-preview__ghost.faction-theme-block .build-preview__ghost-fill {
+  border: none;
+  border-radius: var(--shape-block-radius);
+}
+
+.build-preview__ghost.is-invalid .build-preview__ghost-fill {
+  border-color: var(--build-invalid-border);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--build-invalid-stripe-a),
+    var(--build-invalid-stripe-a) 8px,
+    var(--build-invalid-stripe-b) 8px,
+    var(--build-invalid-stripe-b) 16px
+  );
+  box-shadow: 0 0 14px var(--build-invalid-glow);
+}
+
+@keyframes build-ghost-pulse {
+  0%,
+  100% {
+    opacity: 0.82;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.build-preview__ghost-fill.is-shake {
+  animation: build-ghost-shake 0.4s ease;
+}
+
+@keyframes build-ghost-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.build-preview__ghost-label {
+  position: relative;
+  z-index: 1;
+  font-size: var(--build-ghost-label-size);
+  font-weight: 700;
+  color: color-mix(in srgb, var(--faction-color) 55%, var(--color-mix-light));
+  text-shadow: var(--text-shadow-strong);
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+.build-preview__ghost-hint {
+  position: relative;
+  z-index: 1;
+  font-size: var(--build-ghost-hint-size);
+  color: color-mix(in srgb, var(--faction-color) 40%, var(--text-cool));
+  text-shadow: var(--text-shadow-medium);
+  pointer-events: none;
+}
+
+.build-preview__ghost.is-invalid .build-preview__ghost-label,
+.build-preview__ghost.is-invalid .build-preview__ghost-hint {
+  color: var(--build-invalid-label);
+}
+
+.match-viewport.is-placing {
+  cursor: crosshair;
+}

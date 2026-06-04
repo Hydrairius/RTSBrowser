@@ -1,0 +1,28 @@
+{
+  "name": "@rtsbrowser/shared",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsc --watch",
+    "bench:skirmish": "npm run build && node scripts/bench-skirmish.mjs",
+    "test:combat": "npm run build && node dist/units/combat.test.js",
+    "test:collision": "npm run build && node dist/units/collision.test.js",
+    "test:barriers": "npm run build && node dist/map/barriers.test.js",
+    "test:pathfind": "npm run build && node dist/map/pathfind.test.js",
+    "test:flow-field": "npm run build && node dist/map/flow-field.test.js",
+    "test:construction": "npm run build && node dist/units/construction.test.js",
+    "test:matter-deposits": "npm run build && node dist/map/matter-deposits.test.js",
+    "test:turrets": "npm run build && node dist/structures/turret-combat.test.js"
+  }
+}

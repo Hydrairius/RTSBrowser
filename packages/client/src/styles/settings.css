@@ -1,0 +1,127 @@
+/* Settings — journey shell / setup theme */
+
+.screen.screen-settings {
+  justify-content: center;
+  padding: clamp(1.5rem, 3vh, 2.5rem) clamp(1.25rem, 4vw, 3rem);
+  overflow: auto;
+}
+
+.settings-shell {
+  position: relative;
+  z-index: 1;
+  width: min(640px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.35rem, 2.5vh, 2rem);
+  animation: journey-rise 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.settings-header {
+  text-align: center;
+  margin-bottom: 0.35rem;
+}
+
+.settings-kicker {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--loop);
+  margin-bottom: 0.65rem;
+}
+
+.settings-title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 4.5vw, 2.85rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.settings-sub {
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.5vw, 1.12rem);
+  letter-spacing: 0.03em;
+  max-width: 36rem;
+  margin-inline: auto;
+  line-height: 1.5;
+}
+
+.settings-panel {
+  width: 100%;
+  padding: clamp(1.35rem, 2.2vh, 1.85rem) clamp(1.35rem, 2.5vw, 2rem);
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
+  border-radius: 16px;
+  box-shadow:
+    var(--shadow-setup-panel),
+    var(--shadow-setup-inset-highlight);
+  backdrop-filter: blur(8px);
+}
+
+.settings-panel .audio-settings {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  gap: 1rem;
+}
+
+.settings-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  margin: 0 0 1.25rem;
+}
+
+.settings-label::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 1px;
+  background: var(--accent);
+  opacity: 0.7;
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.25rem;
+}
+
+.settings-back-btn {
+  min-width: 9rem;
+  padding: 0.85rem 1.75rem;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.settings-back-btn:hover {
+  border-color: var(--muted);
+  background: var(--surface-back-hover);
+}
+
+.screen-settings .audio-settings-row {
+  grid-template-columns: 5.5rem 1fr auto;
+}
+
+.audio-settings-value {
+  min-width: 2.75rem;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  text-align: right;
+}

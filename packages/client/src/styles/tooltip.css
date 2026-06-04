@@ -1,0 +1,161 @@
+/**
+ * Hover tooltips for field units and structures.
+ */
+
+.entity-tooltip {
+  position: absolute;
+  z-index: 40;
+  pointer-events: none;
+  min-width: 11rem;
+  max-width: 18rem;
+  padding: 0.6rem 0.85rem 0.65rem;
+  border-radius: var(--radius-lg);
+  background: var(--tooltip-bg);
+  border: 1.5px solid color-mix(in srgb, var(--tooltip-accent, var(--accent)) 60%, var(--tooltip-border-mix));
+  box-shadow:
+    var(--shadow-tooltip),
+    0 0 18px color-mix(in srgb, var(--tooltip-accent, var(--accent)) 30%, transparent);
+  font-size: var(--match-tooltip-base);
+  line-height: 1.4;
+  color: var(--text);
+  opacity: 0;
+  transform: translateY(6px) scale(0.94);
+  transition:
+    opacity 0.16s ease,
+    transform 0.18s cubic-bezier(0.22, 1.1, 0.36, 1);
+}
+
+.entity-tooltip-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.entity-tooltip-title {
+  font-weight: 700;
+  font-size: var(--match-tooltip-title);
+  color: color-mix(in srgb, var(--tooltip-accent, var(--accent)) 75%, var(--color-mix-light));
+  margin-bottom: 0.2rem;
+  letter-spacing: 0.02em;
+}
+
+.entity-tooltip-status {
+  color: var(--text-tooltip-body);
+  font-weight: 500;
+}
+
+.entity-tooltip-detail {
+  margin-top: 0.25rem;
+  font-size: var(--match-tooltip-detail);
+  color: var(--text-tooltip-detail);
+}
+
+.entity-tooltip-hp {
+  margin-top: 0.3rem;
+  font-size: 0.82rem;
+  color: var(--text-tooltip-hp);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.entity-tooltip[data-friendly="false"] .entity-tooltip-title {
+  color: var(--text-tooltip-enemy);
+}
+
+/* --- Hover juice on entities --- */
+
+.field-unit .field-unit-glyph,
+.field-structure .structure-glyph {
+  transition:
+    transform 0.2s cubic-bezier(0.22, 1.15, 0.36, 1),
+    filter 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.field-unit.entity-hovered {
+  z-index: 12;
+}
+
+.field-structure.entity-hovered {
+  z-index: 11;
+}
+
+.field-unit.entity-hovered .field-unit-glyph {
+  transform: scale(1.14);
+  filter: brightness(1.22) saturate(1.1);
+  box-shadow:
+    0 0 16px color-mix(in srgb, var(--faction-color) 65%, transparent),
+    0 0 4px color-mix(in srgb, var(--color-mix-light) 30%, var(--faction-color));
+  animation: entity-hover-bob 0.55s ease-in-out infinite alternate;
+}
+
+.field-structure.entity-hovered .structure-glyph {
+  transform: scale(1.08);
+  filter: brightness(1.18) saturate(1.08);
+  box-shadow:
+    0 0 20px color-mix(in srgb, var(--faction-color) 55%, transparent),
+    inset 0 0 12px color-mix(in srgb, var(--faction-color) 20%, transparent);
+  animation: entity-hover-bob 0.6s ease-in-out infinite alternate;
+}
+
+.field-unit.entity-hovered::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border: 1.5px solid color-mix(in srgb, var(--faction-color) 70%, var(--color-mix-light));
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  animation: entity-hover-ring 0.9s ease-out infinite;
+  opacity: 0.85;
+}
+
+.faction-theme-loop.field-unit.entity-hovered::before {
+  border-radius: 50%;
+}
+
+.field-structure.entity-hovered::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 1.5px solid color-mix(in srgb, var(--faction-color) 60%, var(--color-mix-light));
+  pointer-events: none;
+  animation: entity-hover-ring 0.95s ease-out infinite;
+  opacity: 0.75;
+}
+
+.faction-theme-loop.field-structure.entity-hovered::after {
+  border-radius: var(--shape-loop-radius);
+}
+
+.faction-theme-triad.field-structure.entity-hovered::after {
+  clip-path: var(--shape-triad);
+  border-radius: 0;
+}
+
+.faction-theme-block.field-structure.entity-hovered::after {
+  border-radius: var(--shape-block-radius);
+}
+
+@keyframes entity-hover-bob {
+  from {
+    transform: scale(1.1);
+  }
+  to {
+    transform: scale(1.16);
+  }
+}
+
+@keyframes entity-hover-ring {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.08);
+    opacity: 0.35;
+  }
+}
+
+.field-unit.entity-hovered .unit-hp-track,
+.field-structure.entity-hovered .structure-hp-track {
+  filter: brightness(1.15);
+}

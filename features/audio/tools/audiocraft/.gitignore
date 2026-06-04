@@ -1,0 +1,5 @@
+# AudioCraft generator environment (local venv — not committed)
+.venv/
+
+# Hugging Face / torch caches (optional; can be large)
+.cache/
