@@ -1,6 +1,8 @@
 import {
   HUMAN_PLAYER_ID,
   MAX_GENERATOR_WORKERS,
+  objectiveControlledByExtractorOwner,
+  remainingFluxForExtractor,
   remainingMatterForGenerator,
   structureDef,
   unitDef,
@@ -116,6 +118,31 @@ export function structureTooltipContent(
       status = "Idle";
       detail = `◆${remaining} left`;
     }
+  } else if (s.defId === "extractor" && s.hp > 0) {
+    const remaining = Math.floor(remainingFluxForExtractor(s));
+    const operating = workersOperatingGenerator(state, s.instanceId);
+    const assigned = workersAssignedToGenerator(state, s.instanceId);
+    const rate = def.incomePerTick ?? 0;
+    const controlled = objectiveControlledByExtractorOwner(state, s);
+    if (!controlled) {
+      status = "Flux site lost";
+      detail = friendly ? "Recapture the zone to resume mining" : "Extractor paused";
+    } else if (remaining <= 0) {
+      status = "Flux depleted";
+      detail = "This extractor has exhausted its site";
+    } else if (operating > 0) {
+      status = `Mining Flux - ${Number((operating * rate).toFixed(2))}/tick`;
+      detail = `${operating}/${MAX_GENERATOR_WORKERS} workers active - ${remaining} Flux left`;
+    } else if (assigned > 0) {
+      status = "Workers en route";
+      detail = `${assigned} assigned - max ${MAX_GENERATOR_WORKERS} - ${remaining} Flux left`;
+    } else if (friendly) {
+      status = "Idle extractor";
+      detail = `${remaining} Flux left - right-click with workers to assign`;
+    } else {
+      status = "Idle";
+      detail = `${remaining} Flux left`;
+    }
   } else if (s.defId === "turret") {
     if (s.hp < s.maxHp) {
       status = "Damaged";
@@ -187,7 +214,7 @@ export function unitTooltipContent(state: BuildSimState, u: Unit): EntityTooltip
     case "gather": {
       const site = structureSiteLabel(state, u.order.structureId);
       status = `Gathering at ${site}`;
-      detail = "Mining matter";
+      detail = "Mining resources";
       break;
     }
     case "construct": {

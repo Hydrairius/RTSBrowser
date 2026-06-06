@@ -7,6 +7,7 @@ export const CELL_PX = 48;
 export const NEUTRAL_ZONE_COLS = 15;
 
 export const STARTING_MATTER = 400;
+export const STARTING_FLUX = 0;
 export const BUILD_RANGE_FROM_HQ = 25;
 /** Client match runs building sim at 10 ticks/s. */
 export const BUILD_TICK_MS = 100;
@@ -22,7 +23,7 @@ export const AI_HQ_SPAWN = { gx: 135, gy: 25 };
 
 export type PlayerRole = "human" | "ai";
 export type StructureCategory = "core" | "economy" | "production" | "defense";
-export type StructureDefId = "hq" | "generator" | "barracks" | "turret";
+export type StructureDefId = "hq" | "generator" | "extractor" | "barracks" | "turret";
 
 export interface Footprint {
   w: number;
@@ -43,7 +44,7 @@ export interface StructureDef {
   footprint: Footprint;
   cost: number;
   buildTimeTicks: number;
-  /** Matter per worker per tick when operating a built generator (max 2 workers). */
+  /** Resource per worker per tick when operating a built economy structure (max 2 workers). */
   incomePerTick?: number;
   maxPerPlayer?: number;
   /** Defense turrets — world px range, damage, cooldown, projectile speed. */
@@ -71,6 +72,15 @@ export const STRUCTURE_DEFS: StructureDef[] = [
     cost: 120,
     buildTimeTicks: 30,
     incomePerTick: 0.5,
+  },
+  {
+    id: "extractor",
+    displayName: "Flux Extractor",
+    category: "economy",
+    footprint: { w: 1, h: 1 },
+    cost: 160,
+    buildTimeTicks: 40,
+    incomePerTick: 0.12,
   },
   {
     id: "barracks",
@@ -104,6 +114,7 @@ export function structureDef(id: StructureDefId): StructureDef {
 
 export const BUILDABLE_STRUCTURE_IDS: StructureDefId[] = [
   "generator",
+  "extractor",
   "barracks",
   "turret",
 ];

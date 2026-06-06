@@ -1,6 +1,10 @@
 import { CELL_PX, structureDef } from "../structures/defs.js";
 import type { BuildSimState, PlacedStructure } from "../structures/building.js";
 import { remainingMatterForGenerator } from "../map/matter-deposits.js";
+import {
+  objectiveControlledByExtractorOwner,
+  remainingFluxForExtractor,
+} from "../map/flux-objectives.js";
 import { unitDef, isWorkerUnit } from "./defs.js";
 import { separateUnits, UNIT_COLLISION_RADIUS } from "./collision.js";
 import { moveDestinationsForGroup } from "./combat.js";
@@ -31,8 +35,13 @@ export function incompleteStructuresForPlayer(
   );
 }
 
-function isOperatingGenerator(s: PlacedStructure): boolean {
-  return s.defId === "generator" && structureCombatReady(s) && remainingMatterForGenerator(s) > 0;
+function isOperatingEconomyStructure(state: BuildSimState, s: PlacedStructure): boolean {
+  if (!structureCombatReady(s)) return false;
+  if (s.defId === "generator") return remainingMatterForGenerator(s) > 0;
+  if (s.defId === "extractor") {
+    return objectiveControlledByExtractorOwner(state, s) && remainingFluxForExtractor(s) > 0;
+  }
+  return false;
 }
 
 function workerAtStructureCenter(u: Unit, site: PlacedStructure): boolean {
@@ -114,7 +123,7 @@ export function workersAssignedToGenerator(
   structureId: string,
 ): number {
   const site = state.structures.find((s) => s.instanceId === structureId);
-  if (!site || !isOperatingGenerator(site)) return 0;
+  if (!site || !isOperatingEconomyStructure(state, site)) return 0;
 
   let n = 0;
   for (const u of state.units) {
@@ -130,7 +139,7 @@ export function workersOperatingGenerator(
   structureId: string,
 ): number {
   const site = state.structures.find((s) => s.instanceId === structureId);
-  if (!site || !isOperatingGenerator(site)) return 0;
+  if (!site || !isOperatingEconomyStructure(state, site)) return 0;
 
   let n = 0;
   for (const u of state.units) {
@@ -148,7 +157,7 @@ export function canAssignWorkerToGenerator(
   playerId: string,
 ): boolean {
   const s = state.structures.find((x) => x.instanceId === generatorId);
-  if (!s || s.ownerId !== playerId || !isOperatingGenerator(s)) return false;
+  if (!s || s.ownerId !== playerId || !isOperatingEconomyStructure(state, s)) return false;
   return workersAssignedToGenerator(state, generatorId) < MAX_GENERATOR_WORKERS;
 }
 
@@ -160,7 +169,7 @@ export function issueWorkersGather(
   playerId: string,
 ): BuildSimState {
   const s = state.structures.find((x) => x.instanceId === generatorId);
-  if (!s || s.ownerId !== playerId || !isOperatingGenerator(s)) return state;
+  if (!s || s.ownerId !== playerId || !isOperatingEconomyStructure(state, s)) return state;
 
   let slots = MAX_GENERATOR_WORKERS - workersAssignedToGenerator(state, generatorId);
   if (slots <= 0) return state;
@@ -207,7 +216,7 @@ function nearestGeneratorNeedingWorkers(
   let bestScore = -Infinity;
 
   for (const s of state.structures) {
-    if (!isOperatingGenerator(s) || s.ownerId !== worker.ownerId) continue;
+    if (!isOperatingEconomyStructure(state, s) || s.ownerId !== worker.ownerId) continue;
     const assigned = workersAssignedToGenerator(state, s.instanceId);
     if (assigned >= MAX_GENERATOR_WORKERS) continue;
     const slots = MAX_GENERATOR_WORKERS - assigned;
@@ -291,13 +300,13 @@ function patchUnit(state: BuildSimState, unit: Unit): BuildSimState {
   return { ...state, units };
 }
 
-function applyGeneratorIncome(state: BuildSimState): BuildSimState {
+function applyEconomyIncome(state: BuildSimState): BuildSimState {
   const players = new Map(state.players);
   const structures = state.structures.map((s) => ({ ...s }));
 
   for (const s of structures) {
-    if (!isOperatingGenerator(s)) continue;
-    const def = structureDef("generator");
+    if (!isOperatingEconomyStructure(state, s)) continue;
+    const def = structureDef(s.defId);
     const rate = def.incomePerTick ?? 0;
     if (rate <= 0) continue;
 
@@ -306,14 +315,23 @@ function applyGeneratorIncome(state: BuildSimState): BuildSimState {
 
     const owner = players.get(s.ownerId);
     if (!owner) continue;
-    const available = remainingMatterForGenerator(s);
+    const available =
+      s.defId === "extractor" ? remainingFluxForExtractor(s) : remainingMatterForGenerator(s);
     const gained = Math.min(available, rate * crew);
     if (gained <= 0) continue;
-    s.matterRemaining = available - gained;
-    players.set(s.ownerId, {
-      ...owner,
-      matter: owner.matter + gained,
-    });
+    if (s.defId === "extractor") {
+      s.fluxRemaining = available - gained;
+      players.set(s.ownerId, {
+        ...owner,
+        flux: owner.flux + gained,
+      });
+    } else {
+      s.matterRemaining = available - gained;
+      players.set(s.ownerId, {
+        ...owner,
+        matter: owner.matter + gained,
+      });
+    }
   }
 
   return { ...state, players, structures };
@@ -339,7 +357,7 @@ export function advanceWorkerConstruction(state: BuildSimState): BuildSimState {
     if (cur.order.type === "gather") {
       const structureId = cur.order.structureId;
       const gen = next.structures.find((s) => s.instanceId === structureId);
-      if (!gen || !isOperatingGenerator(gen) || gen.ownerId !== cur.ownerId) {
+      if (!gen || !isOperatingEconomyStructure(next, gen) || gen.ownerId !== cur.ownerId) {
         cur = { ...cur, order: { type: "idle" } };
         next = patchUnit(next, cur);
         continue;
@@ -422,6 +440,6 @@ export function advanceWorkerConstruction(state: BuildSimState): BuildSimState {
   }
 
   next = { ...next, structures };
-  next = applyGeneratorIncome(next);
+  next = applyEconomyIncome(next);
   return next;
 }

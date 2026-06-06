@@ -9,6 +9,7 @@ import {
   HUMAN_PLAYER_ID,
   MAP_COLS,
   MAP_ROWS,
+  STARTING_FLUX,
   STARTING_MATTER,
   structureDef,
   zoneForRole,
@@ -23,6 +24,14 @@ import {
   MATTER_DEPOSIT_CAPACITY,
   matterDepositAt,
 } from "../map/matter-deposits.js";
+import {
+  createFluxObjectiveState,
+  extractorOnAvailableFluxObjective,
+  FLUX_EXTRACTOR_CAPACITY,
+  fluxObjectiveAt,
+  SKIRMISH_FLUX_OBJECTIVES,
+  type FluxObjectiveState,
+} from "../map/flux-objectives.js";
 import type { FlowField } from "../map/flow-field.js";
 import type { Projectile, Unit } from "../units/types.js";
 import {
@@ -36,6 +45,7 @@ export interface BuildPlayer {
   factionId: string;
   role: PlayerRole;
   matter: number;
+  flux: number;
 }
 
 export interface PlacedStructure {
@@ -56,6 +66,8 @@ export interface PlacedStructure {
   attackCooldown?: number;
   /** Generators only: matter left in the claimed deposit. */
   matterRemaining?: number;
+  /** Extractors only: flux left in the claimed objective node. */
+  fluxRemaining?: number;
 }
 
 export interface BuildSimState {
@@ -72,6 +84,10 @@ export interface BuildSimState {
   flowFields?: Map<string, FlowField>;
   /** Matter node ids claimed by a placed generator (one generator per node). */
   consumedMatterDepositIds: string[];
+  /** Neutral flux site ids claimed by a placed extractor (one extractor per site). */
+  consumedFluxObjectiveIds: string[];
+  /** Neutral objective capture state. */
+  fluxObjectives: FluxObjectiveState[];
   /** Per-player fog of war — explored + current LOS. */
   vision?: VisionState;
 }
@@ -88,7 +104,10 @@ export type PlacementRejectReason =
   | "max_count"
   | "insufficient_matter"
   | "no_matter_deposit"
-  | "matter_deposit_claimed";
+  | "matter_deposit_claimed"
+  | "no_flux_objective"
+  | "flux_objective_not_controlled"
+  | "flux_objective_claimed";
 
 export interface PlacementResult {
   ok: boolean;
@@ -138,6 +157,7 @@ export function createBuildSimState(spawns: SpawnConfig[]): BuildSimState {
       factionId: spawn.factionId,
       role: spawn.role,
       matter: STARTING_MATTER,
+      flux: STARTING_FLUX,
     });
     zones.set(spawn.playerId, zoneForRole(spawn.role));
     const hqHp = structureMaxHp("hq");
@@ -165,6 +185,8 @@ export function createBuildSimState(spawns: SpawnConfig[]): BuildSimState {
     nextUnitId: 1,
     nextProjectileId: 1,
     consumedMatterDepositIds: [],
+    consumedFluxObjectiveIds: [],
+    fluxObjectives: createFluxObjectiveState(),
     vision: createVisionForPlayers(spawns.map((s) => s.playerId)),
   };
 }
@@ -209,7 +231,8 @@ export function canPlaceStructure(
     return { ok: false, reason: "out_of_bounds" };
   }
 
-  if (!footprintInZone(gx, gy, def.footprint, zone)) {
+  const placingExtractor = defId === "extractor";
+  if (!placingExtractor && !footprintInZone(gx, gy, def.footprint, zone)) {
     return { ok: false, reason: "outside_territory" };
   }
 
@@ -225,13 +248,26 @@ export function canPlaceStructure(
     }
   }
 
+  if (defId === "extractor") {
+    const site = fluxObjectiveAt(gx, gy);
+    if (!site) return { ok: false, reason: "no_flux_objective" };
+    if (!extractorOnAvailableFluxObjective(state, playerId, gx, gy)) {
+      return {
+        ok: false,
+        reason: state.consumedFluxObjectiveIds.includes(site.id)
+          ? "flux_objective_claimed"
+          : "flux_objective_not_controlled",
+      };
+    }
+  }
+
   if (footprintOverlapsAny(state, gx, gy, def.footprint)) {
     return { ok: false, reason: "overlap" };
   }
 
   const hq = getPlayerHq(state, playerId);
   if (!hq) return { ok: false, reason: "out_of_range" };
-  if (!withinBuildRange(hq, gx, gy, def.footprint)) {
+  if (!placingExtractor && !withinBuildRange(hq, gx, gy, def.footprint)) {
     return { ok: false, reason: "out_of_range" };
   }
 
@@ -262,9 +298,14 @@ export function placeStructure(
   const maxHp = structureMaxHp(defId);
   const deposit =
     defId === "generator" ? matterDepositAt(gx, gy) : undefined;
+  const fluxSite =
+    defId === "extractor" ? fluxObjectiveAt(gx, gy) : undefined;
   const consumedMatterDepositIds = deposit
     ? [...state.consumedMatterDepositIds, deposit.id]
     : state.consumedMatterDepositIds;
+  const consumedFluxObjectiveIds = fluxSite
+    ? [...state.consumedFluxObjectiveIds, fluxSite.id]
+    : state.consumedFluxObjectiveIds;
   const structures = [
     ...state.structures,
     {
@@ -278,6 +319,7 @@ export function placeStructure(
       maxHp,
       trainQueue: [],
       matterRemaining: deposit ? MATTER_DEPOSIT_CAPACITY : undefined,
+      fluxRemaining: fluxSite ? FLUX_EXTRACTOR_CAPACITY : undefined,
     },
   ];
 
@@ -293,6 +335,8 @@ export function placeStructure(
     nextProjectileId: state.nextProjectileId,
     flowFields: state.flowFields,
     consumedMatterDepositIds,
+    consumedFluxObjectiveIds,
+    fluxObjectives: state.fluxObjectives,
     vision: state.vision,
   };
 }
@@ -316,6 +360,8 @@ export function advanceBuildTick(state: BuildSimState): BuildSimState {
     nextProjectileId: state.nextProjectileId,
     flowFields: state.flowFields,
     consumedMatterDepositIds: state.consumedMatterDepositIds,
+    consumedFluxObjectiveIds: state.consumedFluxObjectiveIds,
+    fluxObjectives: state.fluxObjectives,
     vision: state.vision,
   };
 }
@@ -397,6 +443,14 @@ export function buildRangeCells(
   defId: StructureDefId,
 ): Set<string> {
   const cells = new Set<string>();
+  if (defId === "extractor") {
+    for (const site of SKIRMISH_FLUX_OBJECTIVES) {
+      if (canPlaceStructure(state, playerId, defId, site.gx, site.gy).ok) {
+        cells.add(`${site.gx},${site.gy}`);
+      }
+    }
+    return cells;
+  }
   const zone = state.zones.get(playerId);
   if (!zone) return cells;
 

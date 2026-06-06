@@ -1,4 +1,5 @@
 import { advancePlayerVision } from "../vision/vision.js";
+import { advanceFluxObjectiveControl } from "../map/flux-objectives.js";
 import { advanceBuildTickWithAi } from "../structures/ai-builder.js";
 import { advanceStructureTurrets } from "../structures/turret-combat.js";
 import type { BuildSimState } from "../structures/building.js";
@@ -40,6 +41,7 @@ export function advanceSkirmishTick(state: BuildSimState): BuildSimState {
   next = advanceStructureTurrets(next);
   next = advanceProjectiles(next);
   next = pruneDead(next);
+  next = advanceFluxObjectiveControl(next);
 
   if (next.tick % AI_TRAIN_INTERVAL_TICKS === 0) {
     const workerTrain = aiWorkerTrainDecision(next, AI_PLAYER_ID);

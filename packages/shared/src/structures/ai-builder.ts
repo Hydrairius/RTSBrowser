@@ -1,4 +1,5 @@
 import { aiStructureGoal, scoreAiBuildSite } from "../ai/policy.js";
+import { availableFluxObjectives } from "../map/flux-objectives.js";
 import { AI_BUILD_INTERVAL_TICKS, AI_PLAYER_ID, structureDef, type StructureDefId } from "./defs.js";
 import {
   advanceBuildTick,
@@ -40,6 +41,13 @@ export function aiTryPlaceStructure(
   playerId: string,
   defId: StructureDefId,
 ): BuildSimState {
+  if (defId === "extractor") {
+    const site = availableFluxObjectives(state, playerId)[0];
+    if (!site) return state;
+    const next = placeStructure(state, playerId, defId, site.gx, site.gy);
+    return next ?? state;
+  }
+
   const zone = state.zones.get(playerId);
   const hq = state.structures.find((s) => s.ownerId === playerId && s.defId === "hq");
   if (!zone || !hq) return state;

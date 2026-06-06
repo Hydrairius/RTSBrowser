@@ -46,7 +46,7 @@ export function mountMatch(
   const ai = factionById(session.aiFaction);
 
   const hud = el("header", "match-hud");
-  const resources = el("div", "hud-resources", ["◆ 400"]);
+  const resources = el("div", "hud-resources", ["Matter 400 | Flux 0"]);
   const hudCenter = el("div", "hud-center");
   const unitCap = el("div", "hud-unit-cap");
   const unitCapCount = el("span", "hud-unit-cap-count", [`0 / ${PLAYER_UNIT_CAP}`]);
@@ -66,7 +66,7 @@ export function mountMatch(
   const buildRail = el("aside", "match-build-rail");
   buildRail.append(el("h2", "build-rail-title", ["HQ"]));
   const buildRailHint = el("p", "build-rail-hint", [
-    "Click your HQ on the map to open build options",
+    "Click or tap your HQ on the map to open build options",
   ]);
   buildRail.append(buildRailHint);
   const hqTrainRail = el("div", "match-hq-train-rail hidden");
@@ -75,7 +75,7 @@ export function mountMatch(
   buildSection.append(el("h3", "build-rail-title", ["Build"]));
   buildSection.append(
     el("p", "build-rail-hint build-rail-hint-inline", [
-      "Pick a structure, then click the map · Generators need workers (max 2) to earn ◆",
+      "Pick a structure, then click or tap the map - generators need workers (max 2)",
     ]),
   );
   const buildButtons = el("div", "build-rail-buttons");
@@ -87,7 +87,7 @@ export function mountMatch(
     el("p", "", [`${player.displayName} vs ${ai.displayName}`]),
     el("p", "match-intro-sub", ["Mission: Destroy enemy HQ"]),
     el("p", "match-intro-sub", [
-      "Your HQ is in the blue west — click it to build and train Workers",
+      "Your HQ is in the blue west - click or tap it to build and train Workers",
     ]),
   );
   playArea.append(buildRail, viewport);
@@ -97,7 +97,7 @@ export function mountMatch(
   minimapCard.append(
     el("div", "match-minimap-card-header", [
       el("span", "match-minimap-card-title", ["Tactical map"]),
-      el("span", "match-minimap-card-hint", ["Click to pan"]),
+      el("span", "match-minimap-card-hint", ["Click or tap to pan"]),
     ]),
   );
   const minimap = el("div", "hud-minimap");
@@ -106,7 +106,7 @@ export function mountMatch(
   const footer = el("footer", "match-footer");
   const selectionArea = el("div", "hud-selection-area");
   const selectionHint = el("div", "hud-selection-hint", [
-    "Drag to select troops · Shift+click Barracks for multi-select",
+    "Drag to select troops - tap terrain with units selected to order them",
   ]);
   selectionArea.append(selectionHint);
   const unitPanel = mountHudUnitPanel(selectionArea, {
@@ -143,8 +143,8 @@ export function mountMatch(
     humanFaction: session.config.playerFaction!,
     aiFaction: session.aiFaction,
     minimapHost: minimap,
-    onMatterChange(matter) {
-      resources.textContent = `◆ ${Math.floor(matter)}`;
+    onMatterChange(matter, flux) {
+      resources.textContent = `Matter ${Math.floor(matter)} | Flux ${Math.floor(flux)}`;
     },
     onUnitCountChange(count, cap) {
       unitCapCount.textContent = `${count} / ${cap}`;
@@ -185,7 +185,7 @@ export function mountMatch(
   for (const defId of field.getBuildables()) {
     const def = structureDef(defId);
     const icon =
-      def.id === "generator" ? "⚡" : def.id === "turret" ? "◈" : "▣";
+      def.id === "generator" ? "⚡" : def.id === "extractor" ? "F" : def.id === "turret" ? "◈" : "▣";
     const buildName = structureDisplayNameForFaction(
       defId,
       session.config.playerFaction!,

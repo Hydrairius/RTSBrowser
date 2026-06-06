@@ -23,6 +23,7 @@
     "test:flow-field": "npm run build && node dist/map/flow-field.test.js",
     "test:construction": "npm run build && node dist/units/construction.test.js",
     "test:matter-deposits": "npm run build && node dist/map/matter-deposits.test.js",
+    "test:flux-objectives": "npm run build && node dist/map/flux-objectives.test.js",
     "test:turrets": "npm run build && node dist/structures/turret-combat.test.js"
   }
 }

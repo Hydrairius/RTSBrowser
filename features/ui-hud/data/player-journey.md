@@ -3,7 +3,7 @@
 **Status:** planning · **Audience:** designers and client implementers  
 **Scope:** Full intended experience from first visit through match end. **v0** implements a shortened path (no login, no matchmaking); **v1 online** fills in auth and queue.
 
-Design aligns with [vision.md](../../game-vision/data/vision.md) (geometric readability, browser desktop-first) and [factions.json](../../game-vision/data/factions.json) (Triad / Loop / Block).
+Design aligns with [vision.md](../../game-vision/data/vision.md) (geometric readability, browser play on PC and mobile), [factions.json](../../game-vision/data/factions.json) (Triad / Loop / Block), and the [mobile responsiveness plan](mobile-responsive-support.md).
 
 ---
 
@@ -15,7 +15,7 @@ Design aligns with [vision.md](../../game-vision/data/vision.md) (geometric read
 | **Short path to play (v0)** | One screen from title → skirmish setup → match. No account gate. |
 | **Explicit state** | User always sees *where* they are: hub, queue, lobby, loading, in-match, results. |
 | **Fail with recovery** | Auth, disconnect, and desync show a clear message + one primary action (retry, rejoin, exit). |
-| **Desktop-first** | Hotkeys documented in-match; touch not optimized in v0. |
+| **PC + mobile together** | New screens, HUD controls, and gameplay interactions must ship with desktop and touch support in the same feature slice. |
 
 ---
 
@@ -340,6 +340,7 @@ stateDiagram-v2
 | Game vs chrome | Pixi owns world; DOM or `@pixi/ui` for HUD — decide in rendering feature |
 | Persist last faction | `localStorage` key `rts.lastFaction` |
 | Deep link | v1: `/join/:roomId` lands on auth then lobby |
+| Responsive support | Follow [mobile-responsive-support.md](mobile-responsive-support.md); every feature summary should mention at least one desktop and one mobile verification check. |
 
 ---
 

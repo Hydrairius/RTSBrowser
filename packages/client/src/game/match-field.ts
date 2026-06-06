@@ -20,9 +20,15 @@ import {
   CELL_PX,
   SKIRMISH_MAP_BARRIERS,
   SKIRMISH_MATTER_DEPOSITS,
+  SKIRMISH_FLUX_OBJECTIVES,
+  FLUX_CAPTURE_TICKS,
+  fluxObjectiveRemaining,
+  fluxObjectiveState,
   isMatterDepositConsumed,
   matterDepositRemaining,
   remainingMatterForGenerator,
+  remainingFluxForExtractor,
+  objectiveControlledByExtractorOwner,
   SKIRMISH_NAV_LANES,
   AI_HQ_BOWL,
   HUMAN_HQ_BOWL,
@@ -124,7 +130,7 @@ export function mountMatchField(
   options: {
     humanFaction: FactionId;
     aiFaction: FactionId;
-    onMatterChange: (matter: number) => void;
+    onMatterChange: (matter: number, flux: number) => void;
     onUnitCountChange?: (count: number, cap: number) => void;
     onBuildHint: (hint: string) => void;
     onPanHint?: (visible: boolean) => void;
@@ -158,6 +164,7 @@ export function mountMatchField(
   let selecting = false;
   let selectStartX = 0;
   let selectStartY = 0;
+  let suppressTouchCommand = false;
   let skirmishEnded = false;
   let spaceHeld = false;
 
@@ -256,6 +263,21 @@ export function mountMatchField(
     matterDepositsLayer.append(node);
     matterDepositNodes.set(d.id, node);
   }
+  const fluxObjectivesLayer = el("div", "match-flux-objectives");
+  const fluxObjectiveNodes = new Map<string, HTMLElement>();
+  for (const site of SKIRMISH_FLUX_OBJECTIVES) {
+    const node = el("div", "map-flux-objective");
+    node.dataset.siteId = site.id;
+    const radiusPx = site.radiusCells * CELL_PX * 2;
+    node.style.left = `${site.gx * CELL_PX + CELL_PX / 2 - radiusPx / 2}px`;
+    node.style.top = `${site.gy * CELL_PX + CELL_PX / 2 - radiusPx / 2}px`;
+    node.style.width = `${radiusPx}px`;
+    node.style.height = `${radiusPx}px`;
+    node.title = `${site.label} - capture with troops`;
+    node.append(el("span", "map-flux-objective-core", ["F"]));
+    fluxObjectivesLayer.append(node);
+    fluxObjectiveNodes.set(site.id, node);
+  }
   const hqWaypointLayer = el("div", "hq-waypoint-layer");
   const fogHost = el("div", "match-fog");
   const structuresLayer = el("div", "match-structures");
@@ -284,6 +306,7 @@ export function mountMatchField(
     gridLayer,
     barriersLayer,
     matterDepositsLayer,
+    fluxObjectivesLayer,
     hqWaypointLayer,
     fogHost,
     previewLayer,
@@ -610,7 +633,7 @@ export function mountMatchField(
     if (selectedUnitIds.size > 0) return;
     if (hqSelected && barracksIds.length === 0) {
       options.onSelectionHint?.(
-        "HQ selected — train Workers, build structures, right-click map to set rally point",
+        "HQ selected - train Workers, build structures, right-click or tap map to set rally point",
       );
       return;
     }
@@ -620,12 +643,12 @@ export function mountMatchField(
           ? "1 Barracks selected"
           : `${barracksIds.length} Barracks selected`;
       options.onSelectionHint?.(
-        `${label} — train troops below · right-click map to set rally point`,
+        `${label} - train troops below - right-click or tap map to set rally point`,
       );
       return;
     }
     options.onSelectionHint?.(
-      "Drag to select troops · Shift+click Barracks for multi-select",
+      "Drag to select troops - tap terrain with units selected to order them",
     );
   };
 
@@ -641,7 +664,7 @@ export function mountMatchField(
     perfSimSamples += 1;
 
     const human = state.players.get(HUMAN_PLAYER_ID);
-    if (human) options.onMatterChange(human.matter);
+    if (human) options.onMatterChange(human.matter, human.flux);
     options.onUnitCountChange?.(
       countPlayerUnits(state, HUMAN_PLAYER_ID),
       PLAYER_UNIT_CAP,
@@ -820,6 +843,26 @@ export function mountMatchField(
           status.textContent = "";
         }
         fill.style.width = "100%";
+      } else if (s.defId === "extractor" && s.buildProgress >= 1 && s.hp > 0) {
+        const remaining = Math.floor(remainingFluxForExtractor(s));
+        const operating = workersOperatingGenerator(state, s.instanceId);
+        const assigned = workersAssignedToGenerator(state, s.instanceId);
+        const rate = structureDef("extractor").incomePerTick ?? 0;
+        const controlled = objectiveControlledByExtractorOwner(state, s);
+        if (!controlled) {
+          status.textContent = s.ownerId === HUMAN_PLAYER_ID ? "Paused - recapture Flux site" : "";
+        } else if (remaining <= 0) {
+          status.textContent = "Flux depleted";
+        } else if (operating > 0) {
+          status.textContent = `Mining Flux ${Number((operating * rate).toFixed(2))}/tick - ${remaining} left - ${operating}/${MAX_GENERATOR_WORKERS} workers`;
+        } else if (assigned > 0) {
+          status.textContent = `${assigned} worker${assigned === 1 ? "" : "s"} en route - ${remaining} Flux left`;
+        } else if (s.ownerId === HUMAN_PLAYER_ID) {
+          status.textContent = `Idle - ${remaining} Flux left`;
+        } else {
+          status.textContent = "";
+        }
+        fill.style.width = "100%";
       } else {
         status.textContent = s.hp < s.maxHp ? `HP ${Math.ceil(s.hp)}` : "";
         fill.style.width = "100%";
@@ -915,7 +958,10 @@ export function mountMatchField(
     s: (typeof state.structures)[0],
     ownerFaction: FactionId,
   ): void {
-    const active = s.defId === "generator" && s.buildProgress >= 1 && s.hp > 0;
+    const active =
+      (s.defId === "generator" || s.defId === "extractor") &&
+      s.buildProgress >= 1 &&
+      s.hp > 0;
     const operating = active ? workersOperatingGenerator(state, s.instanceId) : 0;
 
     if (!active || operating <= 0) {
@@ -1148,9 +1194,13 @@ export function mountMatchField(
       .map((s) => {
         const q = s.trainQueue.map((e) => `${e.unitDefId}:${e.progress}`).join(",");
         const rally = s.rallyPoint ? `${s.rallyPoint.x},${s.rallyPoint.y}` : "";
-        return `${s.instanceId}:${s.buildProgress}:${s.hp}:${s.matterRemaining ?? ""}:${q}:${rally}`;
+        return `${s.instanceId}:${s.buildProgress}:${s.hp}:${s.matterRemaining ?? ""}:${s.fluxRemaining ?? ""}:${q}:${rally}`;
       })
-      .join(";");
+      .join(";") +
+      "|" +
+      state.fluxObjectives
+        .map((o) => `${o.siteId}:${o.ownerId ?? ""}:${o.capturePlayerId ?? ""}:${o.captureProgress}`)
+        .join(";");
   }
 
   function syncMatterDeposits(): void {
@@ -1169,8 +1219,36 @@ export function mountMatchField(
     }
   }
 
+  function syncFluxObjectives(): void {
+    const vision = getPlayerVision(state, HUMAN_PLAYER_ID);
+    for (const site of SKIRMISH_FLUX_OBJECTIVES) {
+      const node = fluxObjectiveNodes.get(site.id);
+      if (!node) continue;
+      const objective = fluxObjectiveState(state, site.id);
+      const cellExplored = !vision || isCellExplored(vision, site.gx, site.gy);
+      const owner = objective?.ownerId ?? null;
+      const capturing = objective?.capturePlayerId ?? null;
+      const pct = objective ? Math.round((objective.captureProgress / FLUX_CAPTURE_TICKS) * 100) : 0;
+      const remaining = Math.floor(fluxObjectiveRemaining(state, site.id));
+
+      node.classList.toggle("map-flux-objective--hidden", !cellExplored);
+      node.classList.toggle("map-flux-objective--human", owner === HUMAN_PLAYER_ID);
+      node.classList.toggle("map-flux-objective--ai", owner === AI_PLAYER_ID);
+      node.classList.toggle("map-flux-objective--capturing-human", capturing === HUMAN_PLAYER_ID);
+      node.classList.toggle("map-flux-objective--capturing-ai", capturing === AI_PLAYER_ID);
+      node.style.setProperty("--capture-pct", `${pct}%`);
+      node.title =
+        owner === HUMAN_PLAYER_ID
+          ? `${site.label} - yours - ${remaining} Flux left`
+          : owner === AI_PLAYER_ID
+            ? `${site.label} - enemy controlled - ${remaining} Flux left`
+            : `${site.label} - neutral - capture with troops`;
+    }
+  }
+
   function renderStructuresIfNeeded(): void {
     syncMatterDeposits();
+    syncFluxObjectives();
     const key = structureSignature();
     if (key === structureRenderKey) return;
     structureRenderKey = key;
@@ -1447,6 +1525,12 @@ export function mountMatchField(
         return "Need matter node";
       case "matter_deposit_claimed":
         return "Node used";
+      case "no_flux_objective":
+        return "Need Flux site";
+      case "flux_objective_not_controlled":
+        return "Capture site first";
+      case "flux_objective_claimed":
+        return "Site used";
       default:
         return "Cannot place";
     }
@@ -1475,10 +1559,19 @@ export function mountMatchField(
       case "matter_deposit_claimed":
         options.onBuildHint("Blueprint: this matter deposit already has a generator");
         break;
+      case "no_flux_objective":
+        options.onBuildHint("Blueprint: Flux Extractors only on Flux objective cores");
+        break;
+      case "flux_objective_not_controlled":
+        options.onBuildHint("Blueprint: capture the Flux objective with combat units first");
+        break;
+      case "flux_objective_claimed":
+        options.onBuildHint("Blueprint: this Flux objective already has an extractor");
+        break;
       default:
         options.onBuildHint(
           selectedBuild
-            ? "Blueprint follows cursor — click to place · drag/WASD pan · wheel zoom"
+            ? "Blueprint follows cursor - click or tap to place - drag/WASD pan - wheel or pinch zoom"
             : "Select a structure to build",
         );
     }
@@ -1595,15 +1688,11 @@ export function mountMatchField(
     syncSelectionHint();
   }
 
-  function onContextMenu(e: MouseEvent): void {
-    if (!options.simEnabled() || paused || selectedBuild || skirmishEnded) return;
-    if ((e.target as HTMLElement).closest(".match-footer, .match-hud, .match-build-rail")) return;
-    e.preventDefault();
-
+  function issueContextCommand(clientX: number, clientY: number): void {
     const rect = viewport.getBoundingClientRect();
     const cam = camera.getCamera();
     const hitR = worldHitRadiusForZoom(cam.zoom);
-    const { worldX, worldY } = worldFromClient(e.clientX, e.clientY, rect, cam, worldEl);
+    const { worldX, worldY } = worldFromClient(clientX, clientY, rect, cam, worldEl);
 
     const productionIds = selectedProductionStructureIds();
     if (selectedUnitIds.size === 0 && productionIds.length > 0) {
@@ -1615,7 +1704,7 @@ export function mountMatchField(
       commandVfx.showMove(worldX, worldY, fromPositions);
       syncProductionRallyOverlay();
       audio.play("command.rally");
-      options.onSelectionHint?.("Rally point set — newly trained units will move here");
+      options.onSelectionHint?.("Rally point set - newly trained units will move here");
       return;
     }
 
@@ -1636,7 +1725,7 @@ export function mountMatchField(
         );
         commandVfx.showMove(c.x, c.y, fromPositions);
         options.onSelectionHint?.(
-          `Workers assigned to generator (${workersAssignedToGenerator(state, genId)}/${MAX_GENERATOR_WORKERS} max)`,
+          `Workers assigned (${workersAssignedToGenerator(state, genId)}/${MAX_GENERATOR_WORKERS} max)`,
         );
         syncUnitDom();
         return;
@@ -1668,6 +1757,13 @@ export function mountMatchField(
     }
   }
 
+  function onContextMenu(e: MouseEvent): void {
+    if (!options.simEnabled() || paused || selectedBuild || skirmishEnded) return;
+    if ((e.target as HTMLElement).closest(".match-footer, .match-hud, .match-build-rail")) return;
+    e.preventDefault();
+    issueContextCommand(e.clientX, e.clientY);
+  }
+
   const onSpaceKeyDown = (e: KeyboardEvent) => {
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
     if (e.code === "Space") {
@@ -1686,20 +1782,24 @@ export function mountMatchField(
     if (spaceHeld) return;
     if ((e.target as HTMLElement).closest(".map-zoom-controls, .match-footer, .match-hud, .match-build-rail"))
       return;
+    if (e.pointerType === "touch") suppressTouchCommand = false;
 
     const dom = pickDomTarget(state, e.target, HUMAN_PLAYER_ID);
     if (dom.unitId) {
       selectUnits([dom.unitId], e.shiftKey);
+      if (e.pointerType === "touch") suppressTouchCommand = true;
       selecting = false;
       return;
     }
     if (dom.barracksId) {
       selectBarracks([dom.barracksId], e.shiftKey);
+      if (e.pointerType === "touch") suppressTouchCommand = true;
       selecting = false;
       return;
     }
     if (dom.hqSelected) {
       selectHq(true);
+      if (e.pointerType === "touch") suppressTouchCommand = true;
       selecting = false;
       return;
     }
@@ -1712,6 +1812,7 @@ export function mountMatchField(
 
     if (unit) {
       selectUnits([unit.instanceId], e.shiftKey);
+      if (e.pointerType === "touch") suppressTouchCommand = true;
       selecting = false;
       return;
     }
@@ -1719,6 +1820,7 @@ export function mountMatchField(
     const barracksId = pickFriendlyBarracksAt(state, worldX, worldY);
     if (barracksId) {
       selectBarracks([barracksId], e.shiftKey);
+      if (e.pointerType === "touch") suppressTouchCommand = true;
       selecting = false;
       return;
     }
@@ -1726,9 +1828,12 @@ export function mountMatchField(
     const hqId = pickFriendlyHqAt(state, worldX, worldY, HUMAN_PLAYER_ID);
     if (hqId) {
       selectHq(true);
+      if (e.pointerType === "touch") suppressTouchCommand = true;
       selecting = false;
       return;
     }
+
+    if (e.pointerType === "touch") return;
 
     if (!e.shiftKey) {
       clearBarracksSelection();
@@ -1760,6 +1865,22 @@ export function mountMatchField(
   }
 
   function onViewportPointerUp(e: PointerEvent): void {
+    if (!selecting && e.pointerType === "touch") {
+      if (suppressTouchCommand) {
+        suppressTouchCommand = false;
+        camera.clearPanGesture();
+        return;
+      }
+      if (camera.hadPanGesture()) {
+        camera.clearPanGesture();
+        return;
+      }
+      if (!options.simEnabled() || paused || selectedBuild || skirmishEnded) return;
+      if ((e.target as HTMLElement).closest(".map-zoom-controls, .match-footer, .match-hud, .match-build-rail"))
+        return;
+      issueContextCommand(e.clientX, e.clientY);
+      return;
+    }
     if (!selecting) return;
     selecting = false;
     selectionBox.classList.remove("is-active");
@@ -1822,7 +1943,7 @@ export function mountMatchField(
 
     state = advancePlayerVision(next);
     const human = state.players.get(HUMAN_PLAYER_ID);
-    if (human) options.onMatterChange(human.matter);
+    if (human) options.onMatterChange(human.matter, human.flux);
     audio.play("purchase.structure");
     spawnPlacementFlash(snapGx, snapGy, defId);
     renderStructures();
@@ -1856,13 +1977,16 @@ export function mountMatchField(
   syncStructureActivityVfx();
   unitPresenter.snapAll(unitNodes);
   updateMinimap();
-  options.onMatterChange(state.players.get(HUMAN_PLAYER_ID)!.matter);
+  {
+    const human = state.players.get(HUMAN_PLAYER_ID)!;
+    options.onMatterChange(human.matter, human.flux);
+  }
   options.onUnitCountChange?.(
     countPlayerUnits(state, HUMAN_PLAYER_ID),
     PLAYER_UNIT_CAP,
   );
   options.onBuildHint(
-    "HQ: train workers · Build generators on ◆ matter deposits only · Workers gather at built generators (right-click, max 2)",
+    "HQ: train workers - build generators on matter deposits - capture Flux sites with troops, then build extractors",
   );
   selectHq(true, false);
   syncSelectionHint();
@@ -1921,7 +2045,7 @@ export function mountMatchField(
       }
       if (queued === 0) return false;
       const human = state.players.get(HUMAN_PLAYER_ID);
-      if (human) options.onMatterChange(human.matter);
+      if (human) options.onMatterChange(human.matter, human.flux);
       structureRenderKey = "";
       renderStructuresIfNeeded();
       return true;
@@ -1933,7 +2057,7 @@ export function mountMatchField(
       if (!next) return false;
       state = next;
       const human = state.players.get(HUMAN_PLAYER_ID);
-      if (human) options.onMatterChange(human.matter);
+      if (human) options.onMatterChange(human.matter, human.flux);
       structureRenderKey = "";
       renderStructuresIfNeeded();
       return true;

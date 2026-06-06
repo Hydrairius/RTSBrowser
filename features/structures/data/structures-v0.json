@@ -35,6 +35,18 @@
       "maxHp": 200
     },
     {
+      "id": "extractor",
+      "displayName": "Flux Extractor",
+      "category": "economy",
+      "footprint": { "w": 1, "h": 1 },
+      "cost": 160,
+      "buildTimeTicks": 40,
+      "incomePerTick": 0.12,
+      "incomeNote": "per operating worker per tick, max 2 workers; pays Flux",
+      "placementNote": "only on controlled unclaimed neutral flux objective cells (flux-objectives-v0.json)",
+      "maxHp": 220
+    },
+    {
       "id": "barracks",
       "displayName": "Barracks",
       "category": "production",

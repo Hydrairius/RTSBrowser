@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "description": "Neutral high-value Flux objective sites. Combat units capture the zone; workers may build one Flux Extractor on the controlled site.",
+  "captureTicks": 50,
+  "fluxCapacity": 600,
+  "objectives": [
+    { "id": "flux-north", "label": "North Flux Site", "gx": 88, "gy": 22, "radiusCells": 5 },
+    { "id": "flux-mid", "label": "Mid Flux Site", "gx": 90, "gy": 66, "radiusCells": 6 },
+    { "id": "flux-south", "label": "South Flux Site", "gx": 88, "gy": 106, "radiusCells": 5 }
+  ]
+}

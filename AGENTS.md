@@ -92,6 +92,7 @@ These are **not** created yet; use them as a backlog when splitting design work:
 - **Skills**: one `SKILL.md` per skill file; follow [Cursor skill format](https://cursor.com/docs/context/skills).
 - **Data formats**: prefer JSON or YAML with a short `README.md` in `data/` describing schema; version breaking changes in filenames or a `schema-version` field.
 - **Cross-feature dependencies**: document in both features’ `data/README.md` under a “Dependencies” section.
+- **PC + mobile support:** New playable functionality must work on both desktop and mobile at the time it lands. Treat responsive layout, touch input, readable HUD scale, and viewport testing as part of the feature acceptance criteria, not a later cleanup task. Track UI-specific requirements in [features/ui-hud/data/mobile-responsive-support.md](features/ui-hud/data/mobile-responsive-support.md).
 
 ## Creating a new feature
 
@@ -104,7 +105,7 @@ Copy-Item -Recurse features\_template "features\$slug"
 
 ## Decided vs open
 
-**Decided:** local human vs AI; three geometric factions; browser desktop-first; geometric minimalist art.
+**Decided:** local human vs AI; three geometric factions; browser play on PC and mobile; geometric minimalist art.
 
 **Still open** (track in feature `data/` READMEs):
 

@@ -1,4 +1,5 @@
 import { availableMatterDeposits } from "../map/matter-deposits.js";
+import { availableFluxObjectives } from "../map/flux-objectives.js";
 import type { BuildSimState, PlacedStructure } from "../structures/building.js";
 import { countStructures, getPlayerHq } from "../structures/building.js";
 import {
@@ -49,6 +50,7 @@ export function aiMatterReserve(
   if (!player) return 0;
 
   const generators = countStructures(state, playerId, "generator");
+  const extractors = countStructures(state, playerId, "extractor");
   const barracks = countStructures(state, playerId, "barracks");
   const turrets = countStructures(state, playerId, "turret");
   const genCap = Math.min(aiGeneratorCap(tick), generators + availableMatterDeposits(state, playerId).length);
@@ -57,6 +59,8 @@ export function aiMatterReserve(
 
   if (generators < genCap && player.matter < 120) return 120;
   if (generators < genCap) return 140;
+  if (extractors < availableFluxObjectives(state, playerId).length && player.matter < 160) return 160;
+  if (extractors < availableFluxObjectives(state, playerId).length) return 180;
   if (barracks < barCap && player.matter < 150) return 150;
   if (barracks < barCap) return 180;
   if (turrets < turCap && player.matter < 175) return 175;
@@ -288,6 +292,7 @@ export function aiStructureGoal(
   if (!player) return null;
 
   const generators = countStructures(state, playerId, "generator");
+  const extractors = countStructures(state, playerId, "extractor");
   const barracks = countStructures(state, playerId, "barracks");
   const turrets = countStructures(state, playerId, "turret");
   const genCap = Math.min(
@@ -298,6 +303,9 @@ export function aiStructureGoal(
   const turCap = aiTurretCap(tick);
 
   if (generators < genCap && player.matter >= 120) return "generator";
+  if (extractors < availableFluxObjectives(state, playerId).length && player.matter >= 160) {
+    return "extractor";
+  }
   if (barracks < barCap && player.matter >= 150) return "barracks";
   if (turrets < turCap && player.matter >= 175) return "turret";
   return null;

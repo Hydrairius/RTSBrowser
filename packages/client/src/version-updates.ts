@@ -11,11 +11,11 @@ export const VERSION_UPDATES: VersionUpdate[] = [
   {
     version: GAME_VERSION,
     date: "June 4, 2026",
-    title: "Mobile access notice",
+    title: "Mobile support foundation",
     highlights: [
-      "Added a mobile WIP dialog so phone and touch users know the prototype is still desktop-first.",
-      "The notice can be dismissed and stays hidden for the rest of the browser session.",
-      "Desktop players continue straight to the title screen without the mobile notice.",
+      "Removed the mobile warning gate so phone and touch users can enter the skirmish flow directly.",
+      "Added responsive match HUD layout, safe-area viewport handling, and larger touch controls.",
+      "Added touch camera pan, pinch zoom, and tap-to-order support for local skirmish play.",
     ],
   },
   {

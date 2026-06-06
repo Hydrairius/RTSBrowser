@@ -35,6 +35,8 @@ Building placement, construction time, and economy hooks for prototype v0.
 
 ## Sync with code
 
+Flux Extractors are neutral-objective economy structures. Combat units capture a Flux objective first; then workers build and operate the extractor for Flux income used by later higher-tier units.
+
 `packages/shared/src/structures/defs.ts` mirrors `structures-v0.json`. Update both when changing balance.
 
 ## Open questions

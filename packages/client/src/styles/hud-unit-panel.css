@@ -6,6 +6,7 @@
   width: max-content;
   max-width: min(28rem, 52vw);
   flex-shrink: 0;
+  min-width: 0;
 }
 
 .hud-selection-hint {
@@ -160,6 +161,7 @@
 
 .hud-unit-action-btn {
   padding: 0.55rem 0.85rem !important;
+  min-height: var(--touch-target-min);
   font-size: 0.85rem !important;
   font-weight: 600;
   border: 1px solid var(--border-strong) !important;
@@ -167,6 +169,57 @@
   color: var(--text) !important;
   cursor: pointer;
   border-radius: var(--radius-sm);
+}
+
+@media (max-width: 760px), (pointer: coarse) {
+  .hud-selection-area {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+
+  .hud-selection-hint {
+    max-width: none;
+    padding: 0.5rem 0.65rem;
+    font-size: 0.76rem;
+  }
+
+  .hud-unit-panel {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    gap: 0.6rem;
+    padding: 0.55rem 0.65rem;
+  }
+
+  .hud-unit-portrait {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  .hud-unit-body {
+    flex: 1 1 auto;
+    width: auto;
+  }
+
+  .hud-unit-name {
+    font-size: 0.95rem;
+  }
+
+  .hud-unit-role,
+  .hud-unit-detail,
+  .hud-unit-action-hint {
+    display: none;
+  }
+
+  .hud-unit-status,
+  .hud-unit-hp-text {
+    font-size: 0.74rem;
+  }
+
+  .hud-unit-actions {
+    min-width: 4.75rem;
+  }
 }
 
 .hud-unit-action-btn:hover {

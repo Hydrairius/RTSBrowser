@@ -18,6 +18,8 @@ export function structureMaxHp(defId: StructureDefId): number {
       return 450;
     case "generator":
       return 200;
+    case "extractor":
+      return 220;
     case "turret":
       return 300;
     default:

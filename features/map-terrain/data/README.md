@@ -8,6 +8,7 @@ Static layout for the v0 skirmish battle map.
 |------|-------------|
 | `barriers-v0.json` | Impassable wall segments (grid cells) |
 | `matter-deposits-v0.json` | Fixed matter nodes (generator placement only) |
+| `flux-objectives-v0.json` | Neutral high-value resource objectives |
 | `layout-v0.md` | HQ bowls + north/mid/south lane diagram |
 
 ## v0 rules
@@ -22,7 +23,9 @@ Static layout for the v0 skirmish battle map.
 
 ## Sync with code
 
-`packages/shared/src/map/barriers.ts` mirrors `barriers-v0.json`. `packages/shared/src/map/matter-deposits.ts` mirrors `matter-deposits-v0.json`. Update both when changing layout.
+Flux objectives are three neutral lane sites. Combat units capture a site, then workers may build one **Flux Extractor** on the controlled node. Extractors mine Flux for later high-tier units and stop while their owner does not control the zone.
+
+`packages/shared/src/map/barriers.ts` mirrors `barriers-v0.json`. `packages/shared/src/map/matter-deposits.ts` mirrors `matter-deposits-v0.json`. `packages/shared/src/map/flux-objectives.ts` mirrors `flux-objectives-v0.json`. Update both when changing layout.
 
 ## Dependencies
 

@@ -289,7 +289,7 @@ export function pickFriendlyGeneratorAt(
   ownerId: string,
 ): string | null {
   for (const s of state.structures) {
-    if (s.ownerId !== ownerId || s.defId !== "generator") continue;
+    if (s.ownerId !== ownerId || (s.defId !== "generator" && s.defId !== "extractor")) continue;
     if (s.buildProgress < 1 || s.hp <= 0) continue;
     const def = structureDef(s.defId);
     const x0 = s.gx * CELL_PX;

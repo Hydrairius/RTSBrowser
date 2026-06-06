@@ -118,6 +118,12 @@ export function attachMapCamera(
   let camStartX = 0;
   let camStartY = 0;
   let panGesture = false;
+  const activePointers = new Map<number, { clientX: number; clientY: number }>();
+  let pinching = false;
+  let pinchStartDistance = 1;
+  let pinchStartZoom = DEFAULT_ZOOM;
+  let pinchWorldX = 0;
+  let pinchWorldY = 0;
   const keys = new Set<string>();
 
   const apply = () => {
@@ -146,6 +152,40 @@ export function attachMapCamera(
     apply();
   };
 
+  const applyZoomAroundScreenPoint = (screenX: number, screenY: number, zoom: number) => {
+    const nextZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
+    cam = {
+      x: pinchWorldX - screenX / nextZoom,
+      y: pinchWorldY - screenY / nextZoom,
+      zoom: nextZoom,
+    };
+    apply();
+  };
+
+  const touchPoints = (): Array<{ clientX: number; clientY: number }> =>
+    [...activePointers.values()];
+
+  const distance = (
+    a: { clientX: number; clientY: number },
+    b: { clientX: number; clientY: number },
+  ): number => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+
+  const startPinch = () => {
+    const pts = touchPoints();
+    if (pts.length < 2) return;
+    const [a, b] = pts;
+    const rect = viewport.getBoundingClientRect();
+    const screenX = (a.clientX + b.clientX) / 2 - rect.left;
+    const screenY = (a.clientY + b.clientY) / 2 - rect.top;
+    pinchWorldX = cam.x + screenX / cam.zoom;
+    pinchWorldY = cam.y + screenY / cam.zoom;
+    pinchStartDistance = Math.max(1, distance(a, b));
+    pinchStartZoom = cam.zoom;
+    pinching = true;
+    dragging = false;
+    panGesture = true;
+  };
+
   const onWheel = (e: WheelEvent) => {
     if (!options.enabled()) return;
     e.preventDefault();
@@ -157,12 +197,25 @@ export function attachMapCamera(
   };
 
   const onPointerDown = (e: PointerEvent) => {
+    if (e.pointerType === "touch") {
+      if (!options.enabled()) return;
+      activePointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+      viewport.setPointerCapture(e.pointerId);
+      if (activePointers.size >= 2) {
+        startPinch();
+        e.preventDefault();
+        return;
+      }
+    }
+
     const canPan =
-      e.button === 1 || e.button === 2
+      e.pointerType === "touch"
         ? options.enabled()
-        : (options.allowDragPan?.() ?? options.enabled());
+        : e.button === 1 || e.button === 2
+          ? options.enabled()
+          : (options.allowDragPan?.() ?? options.enabled());
     if (!canPan) return;
-    if (e.button !== 0 && e.button !== 1 && e.button !== 2) return;
+    if (e.pointerType !== "touch" && e.button !== 0 && e.button !== 1 && e.button !== 2) return;
     const target = e.target as HTMLElement;
     if (target.closest(".map-zoom-controls, .build-btn, .hud-menu-btn, .overlay, .match-demo-bar"))
       return;
@@ -172,13 +225,26 @@ export function attachMapCamera(
     dragStartY = e.clientY;
     camStartX = cam.x;
     camStartY = cam.y;
-    if (e.button === 0) {
+    if (e.button === 0 || e.pointerType === "touch") {
       viewport.setPointerCapture(e.pointerId);
     }
     e.preventDefault();
   };
 
   const onPointerMove = (e: PointerEvent) => {
+    if (e.pointerType === "touch" && activePointers.has(e.pointerId)) {
+      activePointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
+      if (pinching && activePointers.size >= 2) {
+        const pts = touchPoints();
+        const [a, b] = pts;
+        const rect = viewport.getBoundingClientRect();
+        const sx = (a.clientX + b.clientX) / 2 - rect.left;
+        const sy = (a.clientY + b.clientY) / 2 - rect.top;
+        const zoom = pinchStartZoom * (distance(a, b) / pinchStartDistance);
+        applyZoomAroundScreenPoint(sx, sy, zoom);
+        return;
+      }
+    }
     if (!dragging) return;
     const dx = e.clientX - dragStartX;
     const dy = e.clientY - dragStartY;
@@ -192,6 +258,10 @@ export function attachMapCamera(
   };
 
   const onPointerUp = (e: PointerEvent) => {
+    if (e.pointerType === "touch") {
+      activePointers.delete(e.pointerId);
+      if (activePointers.size < 2) pinching = false;
+    }
     if (!dragging) return;
     dragging = false;
     try {
