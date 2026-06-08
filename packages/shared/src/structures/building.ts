@@ -231,8 +231,10 @@ export function canPlaceStructure(
     return { ok: false, reason: "out_of_bounds" };
   }
 
-  const placingExtractor = defId === "extractor";
-  if (!placingExtractor && !footprintInZone(gx, gy, def.footprint, zone)) {
+  const deposit = defId === "generator" ? matterDepositAt(gx, gy) : undefined;
+  const placingNeutralObjectiveStructure =
+    defId === "extractor" || (defId === "generator" && deposit?.side === "neutral");
+  if (!placingNeutralObjectiveStructure && !footprintInZone(gx, gy, def.footprint, zone)) {
     return { ok: false, reason: "outside_territory" };
   }
 
@@ -241,7 +243,6 @@ export function canPlaceStructure(
   }
 
   if (defId === "generator") {
-    const deposit = matterDepositAt(gx, gy);
     if (!deposit) return { ok: false, reason: "no_matter_deposit" };
     if (!generatorOnAvailableMatterDeposit(state, playerId, gx, gy)) {
       return { ok: false, reason: "matter_deposit_claimed" };
@@ -267,7 +268,7 @@ export function canPlaceStructure(
 
   const hq = getPlayerHq(state, playerId);
   if (!hq) return { ok: false, reason: "out_of_range" };
-  if (!placingExtractor && !withinBuildRange(hq, gx, gy, def.footprint)) {
+  if (!placingNeutralObjectiveStructure && !withinBuildRange(hq, gx, gy, def.footprint)) {
     return { ok: false, reason: "out_of_range" };
   }
 

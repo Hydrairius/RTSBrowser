@@ -912,6 +912,28 @@ button:disabled {
   z-index: 2;
 }
 
+.minimap-flux-objectives {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.minimap-flux-objective {
+  position: absolute;
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+  border: 1px solid color-mix(in srgb, #9be7ff 82%, transparent);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, #9be7ff 28%, transparent) 0%,
+    color-mix(in srgb, #9be7ff 10%, transparent) 48%,
+    transparent 72%
+  );
+  box-shadow: 0 0 8px color-mix(in srgb, #9be7ff 40%, transparent);
+}
+
 .minimap-matter-deposit {
   position: absolute;
   box-sizing: border-box;

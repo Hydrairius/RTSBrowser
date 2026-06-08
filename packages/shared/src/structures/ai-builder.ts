@@ -1,4 +1,5 @@
 import { aiStructureGoal, scoreAiBuildSite } from "../ai/policy.js";
+import { availableMatterDeposits } from "../map/matter-deposits.js";
 import { availableFluxObjectives } from "../map/flux-objectives.js";
 import { AI_BUILD_INTERVAL_TICKS, AI_PLAYER_ID, structureDef, type StructureDefId } from "./defs.js";
 import {
@@ -41,6 +42,15 @@ export function aiTryPlaceStructure(
   playerId: string,
   defId: StructureDefId,
 ): BuildSimState {
+  if (defId === "generator") {
+    const site = availableMatterDeposits(state, playerId).find((d) =>
+      canPlaceStructure(state, playerId, defId, d.gx, d.gy).ok
+    );
+    if (!site) return state;
+    const next = placeStructure(state, playerId, defId, site.gx, site.gy);
+    return next ?? state;
+  }
+
   if (defId === "extractor") {
     const site = availableFluxObjectives(state, playerId)[0];
     if (!site) return state;

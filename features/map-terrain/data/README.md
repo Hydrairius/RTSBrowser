@@ -19,7 +19,7 @@ Static layout for the v0 skirmish battle map.
 - Units follow **waypoints** along the computed path for move and chase orders.
 - Players cannot place structures on any barrier cell.
 - Barriers may sit in **neutral**, **human**, or **AI** zones to create lanes and chokepoints.
-- **Matter deposits**: five fixed cells per HQ bowl; **generators** may only be placed on an unclaimed deposit (one generator per node). Each node contains **◆1500** matter. Player **◆ matter** (currency) is separate from map nodes.
+- **Matter deposits**: five fixed cells per HQ bowl plus two neutral contest nodes near each Flux objective; **generators** may only be placed on an unclaimed deposit (one generator per node). Home nodes are side-locked; neutral contest nodes are buildable by either player. Each node contains **◆1500** matter. Player **◆ matter** (currency) is separate from map nodes.
 
 ## Sync with code
 

@@ -6,6 +6,7 @@ import {
   HUMAN_PLAYER_ID,
   neutralZoneBounds,
   SKIRMISH_MAP_BARRIERS,
+  SKIRMISH_FLUX_OBJECTIVES,
   SKIRMISH_MATTER_DEPOSITS,
   zoneForRole,
   type PlayerVision,
@@ -118,6 +119,18 @@ export function mountMinimap(
     matterLayer.append(dot);
   }
 
+  const fluxLayer = el("div", "minimap-flux-objectives");
+  for (const site of SKIRMISH_FLUX_OBJECTIVES) {
+    const radius = site.radiusCells * CELL_PX;
+    const marker = el("div", "minimap-flux-objective");
+    marker.title = `${site.label} - Flux capture zone`;
+    marker.style.left = `${(site.gx * CELL_PX + CELL_PX / 2) * scaleX}px`;
+    marker.style.top = `${(site.gy * CELL_PX + CELL_PX / 2) * scaleY}px`;
+    marker.style.width = `${radius * 2 * scaleX}px`;
+    marker.style.height = `${radius * 2 * scaleY}px`;
+    fluxLayer.append(marker);
+  }
+
   const structuresLayer = el("div", "minimap-structures");
   const unitsLayer = el("div", "minimap-units");
   const fogLayer = el("div", "minimap-fog");
@@ -130,6 +143,7 @@ export function mountMinimap(
     zoneAi,
     zoneNeutral,
     barriersLayer,
+    fluxLayer,
     matterLayer,
     structuresLayer,
     unitsLayer,

@@ -4,7 +4,7 @@ import type { BuildSimState } from "../structures/building.js";
 import { AI_PLAYER_ID, HUMAN_PLAYER_ID } from "../structures/defs.js";
 import { footprintOverlapsBarrier } from "./barriers.js";
 
-export type MatterDepositSide = "human" | "ai";
+export type MatterDepositSide = "human" | "ai" | "neutral";
 
 export interface MatterDeposit {
   id: string;
@@ -23,6 +23,12 @@ export const SKIRMISH_MATTER_DEPOSITS: readonly MatterDeposit[] = [
   { id: "human-m3", side: "human", gx: 30, gy: 72 },
   { id: "human-m4", side: "human", gx: 38, gy: 68 },
   { id: "human-m5", side: "human", gx: 42, gy: 88 },
+  { id: "neutral-flux-nw", side: "neutral", gx: 85, gy: 16 },
+  { id: "neutral-flux-ne", side: "neutral", gx: 95, gy: 26 },
+  { id: "neutral-flux-mw", side: "neutral", gx: 84, gy: 62 },
+  { id: "neutral-flux-me", side: "neutral", gx: 96, gy: 68 },
+  { id: "neutral-flux-sw", side: "neutral", gx: 85, gy: 100 },
+  { id: "neutral-flux-se", side: "neutral", gx: 95, gy: 110 },
   { id: "ai-m1", side: "ai", gx: 128, gy: 18 },
   { id: "ai-m2", side: "ai", gx: 132, gy: 28 },
   { id: "ai-m3", side: "ai", gx: 145, gy: 20 },
@@ -81,8 +87,11 @@ export function availableMatterDeposits(
 ): MatterDeposit[] {
   const side = matterDepositSideForPlayer(playerId);
   if (!side) return [];
-  return matterDepositsForSide(side).filter(
-    (d) => !isMatterDepositConsumed(state, d.id) && !footprintOverlapsBarrier(d.gx, d.gy, { w: 1, h: 1 }),
+  return SKIRMISH_MATTER_DEPOSITS.filter(
+    (d) =>
+      (d.side === side || d.side === "neutral") &&
+      !isMatterDepositConsumed(state, d.id) &&
+      !footprintOverlapsBarrier(d.gx, d.gy, { w: 1, h: 1 }),
   );
 }
 
@@ -90,7 +99,7 @@ export function availableMatterDeposits(
 export function maxGeneratorsForPlayer(playerId: string): number {
   const side = matterDepositSideForPlayer(playerId);
   if (!side) return 0;
-  return matterDepositsForSide(side).length;
+  return matterDepositsForSide(side).length + matterDepositsForSide("neutral").length;
 }
 
 /** True when a 1×1 generator anchor sits on an open matter node for this player. */
@@ -103,6 +112,6 @@ export function generatorOnAvailableMatterDeposit(
   const side = matterDepositSideForPlayer(playerId);
   if (!side) return false;
   const deposit = matterDepositAt(gx, gy);
-  if (!deposit || deposit.side !== side) return false;
+  if (!deposit || (deposit.side !== side && deposit.side !== "neutral")) return false;
   return !isMatterDepositConsumed(state, deposit.id);
 }

@@ -24,6 +24,7 @@ function testDepositsNotOnBarriers(): void {
 
 function testDepositsInHqBowls(): void {
   for (const d of SKIRMISH_MATTER_DEPOSITS) {
+    if (d.side === "neutral") continue;
     const bowl = d.side === "human" ? HUMAN_HQ_BOWL : AI_HQ_BOWL;
     assert.ok(
       d.gx >= bowl.minGx &&
@@ -47,12 +48,12 @@ function testGeneratorRequiresDeposit(): void {
 
 function testDepositConsumedAfterPlace(): void {
   let state = createSkirmishBuildState("triad", "loop");
-  assert.equal(availableMatterDeposits(state, HUMAN_PLAYER_ID).length, 5);
+  assert.equal(availableMatterDeposits(state, HUMAN_PLAYER_ID).length, 11);
 
   const placed = placeStructure(state, HUMAN_PLAYER_ID, "generator", 30, 72);
   assert.ok(placed);
   state = placed!;
-  assert.equal(availableMatterDeposits(state, HUMAN_PLAYER_ID).length, 4);
+  assert.equal(availableMatterDeposits(state, HUMAN_PLAYER_ID).length, 10);
   assert.ok(state.consumedMatterDepositIds.includes("human-m3"));
 
   const again = canPlaceStructure(state, HUMAN_PLAYER_ID, "generator", 30, 72);
@@ -69,6 +70,18 @@ function testBarracksIgnoresDeposits(): void {
 function testFiveDepositsPerSide(): void {
   assert.equal(matterDepositsForSide("human").length, 5);
   assert.equal(matterDepositsForSide("ai").length, 5);
+  assert.equal(matterDepositsForSide("neutral").length, 6);
+}
+
+function testNeutralFluxDepositCanBeClaimedByHuman(): void {
+  let state = createSkirmishBuildState("triad", "loop");
+  const result = canPlaceStructure(state, HUMAN_PLAYER_ID, "generator", 85, 16);
+  assert.equal(result.ok, true);
+
+  const placed = placeStructure(state, HUMAN_PLAYER_ID, "generator", 85, 16);
+  assert.ok(placed);
+  state = placed!;
+  assert.ok(state.consumedMatterDepositIds.includes("neutral-flux-nw"));
 }
 
 testDepositsNotOnBarriers();
@@ -77,4 +90,5 @@ testGeneratorRequiresDeposit();
 testDepositConsumedAfterPlace();
 testBarracksIgnoresDeposits();
 testFiveDepositsPerSide();
+testNeutralFluxDepositCanBeClaimedByHuman();
 console.log("matter-deposits.test.js: ok");
